@@ -1,4 +1,4 @@
-ipython==7.16.1
+ipython==9.10.0
 jupyter-client==7.1.0
 Markdown==3.3.6
 matplotlib==3.5.1
