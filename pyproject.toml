@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sciencebeam-judge"
+version = "0.0.1"
+description = "ScienceBeam Judge"
+requires-python = ">=3.10"
+dependencies = [
+    "configparser>=5.2.0",
+    "editdistance>=0.6.0",
+    "future>=0.18.2",
+    "lxml>=4.9.0",
+    "natsort>=8.0.0",
+    "numpy>=2.0.0",
+    "PyYAML>=6.0",
+    "regex>=2022.0.0",
+    "sciencebeam-alignment>=0.0.7",
+    "sciencebeam-utils>=0.1.4",
+    "tqdm>=4.62.0",
+    "typing-extensions>=4.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "apache-beam[gcp]>=2.50.0",
+    "anyio<4",
+    "setuptools<71",
+    "flake8>=4.0.1,<5",
+    "jsonschema>=4.3.0",
+    "mypy>=0.910,<0.920",
+    "pylint>=2.8.3,<2.9",
+    "pytest>=6.2.5,<7",
+    "pytest-watch>=4.2.0",
+    "python-lorem>=1.1.2",
+    "pyprof2calltree>=1.4.5",
+    "types-PyYAML>=6.0.0",
+    "types-requests>=2.26.0",
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]

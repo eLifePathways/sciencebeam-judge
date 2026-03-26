@@ -2,9 +2,8 @@ DOCKER_COMPOSE_DEV = docker-compose
 DOCKER_COMPOSE_CI = docker-compose -f docker-compose.yml -f docker-compose.ci.yml
 DOCKER_COMPOSE = $(DOCKER_COMPOSE_DEV)
 
-VENV = venv
-PIP = $(VENV)/bin/pip
-PYTHON = $(VENV)/bin/python
+VENV = .venv
+PYTHON = uv run python
 
 DEV_RUN = $(DOCKER_COMPOSE) run --name "$(RUN_NAME)" --rm sciencebeam-judge-dev
 
@@ -41,30 +40,26 @@ venv-clean:
 
 
 venv-create:
-	python3 -m venv $(VENV)
+	uv venv "$(VENV)"
 
 
 dev-install:
-	$(PIP) install -r requirements.build.txt
-	$(PIP) install \
-		-r requirements.txt \
-		-r requirements.prereq.txt \
-		-r requirements.dev.txt
+	uv sync --frozen
 
 
 dev-venv: venv-create dev-install
 
 
 dev-flake8:
-	$(PYTHON) -m flake8 sciencebeam_judge tests setup.py
+	$(PYTHON) -m flake8 sciencebeam_judge tests
 
 
 dev-pylint:
-	$(PYTHON) -m pylint sciencebeam_judge tests setup.py
+	$(PYTHON) -m pylint sciencebeam_judge tests
 
 
 dev-mypy:
-	$(PYTHON) -m mypy --ignore-missing-imports sciencebeam_judge tests setup.py
+	$(PYTHON) -m mypy --ignore-missing-imports --no-site-packages sciencebeam_judge tests
 
 
 dev-lint: dev-flake8 dev-pylint dev-mypy
