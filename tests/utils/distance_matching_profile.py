@@ -6,13 +6,11 @@ import pstats
 import cProfile
 from collections import OrderedDict
 from itertools import islice
-from pathlib import Path
 from timeit import timeit
 from typing import List, Tuple
 
 import pyprof2calltree
 
-import requests
 import lorem
 
 from sciencebeam_judge.parsing.xml import parse_xml, parse_xml_mapping
@@ -66,10 +64,6 @@ NAMED_DISTANCE_MEASURES = OrderedDict([
 ])
 
 
-MIT_WORD_LIST_10000_URL = (
-    'https://www.mit.edu/~ecprice/wordlist.10000'
-)
-
 EXAMPLE_DATA_EXPECTED_XML = (
     'example-data/pmc-sample-1943-cc-by-subset'
     '/Acta_Anaesthesiol_Scand_2011_Jan_55(1)_39-45/aas0055-0039.nxml'
@@ -119,17 +113,6 @@ class DistanceMatchesPerfTester:
             locals={'self': self, 'args': args, 'kwargs': kwargs}
         )
         return profile
-
-
-def get_file(url: str) -> str:
-    local_path = os.path.join('.temp', os.path.basename(url))
-    if os.path.exists(local_path):
-        return local_path
-    response = requests.get(url)
-    response.raise_for_status()
-    data = response.content
-    Path(local_path).write_bytes(data)
-    return local_path
 
 
 def modify_text(
@@ -219,12 +202,6 @@ def run_profiler(
 
 
 def generate_text_and_profile(**kwargs):
-    word_list = (
-        Path(get_file(MIT_WORD_LIST_10000_URL))
-        .read_text()
-        .splitlines()
-    )
-    lorem.set_pool(word_list)
     expected_list, actual_list = get_generated_expected_actual_list()
     run_profiler(expected_list=expected_list, actual_list=actual_list, **kwargs)
 
