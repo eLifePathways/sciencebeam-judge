@@ -1,37 +1,15 @@
-DOCKER_COMPOSE_DEV = docker-compose
-DOCKER_COMPOSE_CI = docker-compose -f docker-compose.yml -f docker-compose.ci.yml
-DOCKER_COMPOSE = $(DOCKER_COMPOSE_DEV)
-
-VENV = venv
-PIP = $(VENV)/bin/pip
-PYTHON = $(VENV)/bin/python
-
-DEV_RUN = $(DOCKER_COMPOSE) run --name "$(RUN_NAME)" --rm sciencebeam-judge-dev
-
-MOUNT = --volume="$$PWD/example-data:/example-data"
-
-RUN_NAME =
-JUDGE_SERVICE = sciencebeam-judge
-RUN = $(DOCKER_COMPOSE) run $(MOUNT) --name "$(RUN_NAME)" --rm $(JUDGE_SERVICE)
-
-JUPYTER_MOUNT = --volume="$$PWD/example-data:/home/jovyan/sciencebeam-judge/example-data"
-JUPYTER_RUN = $(DOCKER_COMPOSE) run $(JUPYTER_MOUNT) --name "$(RUN_NAME)" --rm sciencebeam-judge-jupyter
-
+VENV = .venv
+PYTHON = uv run python
 
 PYTEST_ARGS =
 EVALUATE_ARGS =
 TOOL =
-EVALUATION_RESULTS_OUTPUT_PATH = /example-data/pmc-sample-1943-cc-by-subset-results/$(TOOL)/evaluation-results
 NOTEBOOK_OUTPUT_FILE =
-NO_BUILD =
 
 EXAMPLE_DATA_EXPECTED_BASE_PATH = ./example-data/pmc-sample-1943-cc-by-subset
 EXAMPLE_DATA_ACTUAL_BASE_PATH = ./example-data/pmc-sample-1943-cc-by-subset-results/grobid-tei
 
 PROFILE_ARGS =
-
-
-.PHONY: build
 
 
 venv-clean:
@@ -41,30 +19,26 @@ venv-clean:
 
 
 venv-create:
-	python3 -m venv $(VENV)
+	uv venv "$(VENV)"
 
 
 dev-install:
-	$(PIP) install -r requirements.build.txt
-	$(PIP) install \
-		-r requirements.txt \
-		-r requirements.prereq.txt \
-		-r requirements.dev.txt
+	uv sync --frozen --all-groups
 
 
 dev-venv: venv-create dev-install
 
 
 dev-flake8:
-	$(PYTHON) -m flake8 sciencebeam_judge tests setup.py
+	$(PYTHON) -m flake8 sciencebeam_judge tests
 
 
 dev-pylint:
-	$(PYTHON) -m pylint sciencebeam_judge tests setup.py
+	$(PYTHON) -m pylint sciencebeam_judge tests
 
 
 dev-mypy:
-	$(PYTHON) -m mypy --ignore-missing-imports sciencebeam_judge tests setup.py
+	$(PYTHON) -m mypy --ignore-missing-imports --no-site-packages sciencebeam_judge tests
 
 
 dev-lint: dev-flake8 dev-pylint dev-mypy
@@ -81,13 +55,64 @@ dev-watch:
 dev-test: dev-lint dev-pytest
 
 
-dev-update-example-data-results:
+.dev-update-example-data-results:
 	$(PYTHON) -m sciencebeam_judge.evaluation_pipeline \
 		--target-file-list $(EXAMPLE_DATA_EXPECTED_BASE_PATH)/file-list.tsv \
 		--target-file-column=xml_url \
-		--prediction-file-list $(EXAMPLE_DATA_ACTUAL_BASE_PATH)/file-list.lst \
-		--output-path .temp/evaluation-results \
-		--sequential
+		--prediction-file-list ./example-data/pmc-sample-1943-cc-by-subset-results/$(TOOL)/file-list.lst \
+		--output-path $(EVALUATION_RESULTS_OUTPUT_PATH) \
+		--sequential \
+		$(EVALUATE_ARGS)
+
+
+dev-update-example-data-results-cermine:
+	$(MAKE) TOOL=cermine \
+		EVALUATION_RESULTS_OUTPUT_PATH=./example-data/pmc-sample-1943-cc-by-subset-results/cermine/evaluation-results \
+		.dev-update-example-data-results
+
+
+dev-update-example-data-results-cermine-temp:
+	$(MAKE) TOOL=cermine EVALUATION_RESULTS_OUTPUT_PATH=/tmp .dev-update-example-data-results
+
+
+dev-update-example-data-results-grobid-tei:
+	$(MAKE) TOOL=grobid-tei \
+		EVALUATION_RESULTS_OUTPUT_PATH=./example-data/pmc-sample-1943-cc-by-subset-results/grobid-tei/evaluation-results \
+		.dev-update-example-data-results
+
+
+dev-update-example-data-results-grobid-tei-temp:
+	$(MAKE) TOOL=grobid-tei EVALUATION_RESULTS_OUTPUT_PATH=/tmp .dev-update-example-data-results
+
+
+dev-update-example-data-results: \
+	dev-update-example-data-results-cermine dev-update-example-data-results-grobid-tei
+
+
+dev-test-run-evaluation: \
+	dev-update-example-data-results-cermine-temp dev-update-example-data-results-grobid-tei-temp
+
+
+dev-update-example-data-notebooks-summary:
+	uv run bash scripts/jupyter/update-notebook-and-check-no-errors.sh \
+		notebooks/conversion-results-summary.ipynb "$(NOTEBOOK_OUTPUT_FILE)"
+
+
+dev-update-example-data-notebooks-details:
+	uv run bash scripts/jupyter/update-notebook-and-check-no-errors.sh \
+		notebooks/conversion-results-details.ipynb "$(NOTEBOOK_OUTPUT_FILE)"
+
+
+dev-update-example-data-notebooks: \
+	dev-update-example-data-notebooks-summary dev-update-example-data-notebooks-details
+
+
+dev-update-example-data-notebooks-temp:
+	$(MAKE) NOTEBOOK_OUTPUT_FILE="/tmp/dummy.ipynb" dev-update-example-data-notebooks
+
+
+dev-test-evaluate-and-update-notebooks: \
+	dev-update-example-data-results dev-update-example-data-notebooks-temp
 
 
 dev-distance-matching-profile:
@@ -164,128 +189,9 @@ dev-distance-matching-profile-example-10:
 		$(PROFILE_ARGS)
 
 
-build:
-	if [ "$(NO_BUILD)" != "y" ]; then \
-		$(DOCKER_COMPOSE) build; \
-	fi
-
-
-build-judge:
-	@if [ "$(NO_BUILD)" != "y" ]; then \
-		$(DOCKER_COMPOSE) build sciencebeam-judge; \
-	fi
-
-
-build-dev:
-	if [ "$(NO_BUILD)" != "y" ]; then \
-		$(DOCKER_COMPOSE) build sciencebeam-judge-dev; \
-	fi
-
-
-test: build-dev
-	$(DEV_RUN) ./project_tests.sh
-
-
-watch: build-dev
-	$(DEV_RUN) pytest-watch -- $(PYTEST_ARGS)
-
-
-.update-example-data-results:
-	$(RUN) python -m sciencebeam_judge.evaluation_pipeline \
-		--target-file-list /example-data/pmc-sample-1943-cc-by-subset/file-list.tsv \
-		--target-file-column=xml_url \
-		--prediction-file-list /example-data/pmc-sample-1943-cc-by-subset-results/$(TOOL)/file-list.lst \
-		--output-path $(EVALUATION_RESULTS_OUTPUT_PATH) \
-		--sequential \
-		$(EVALUATE_ARGS)
-
-
-update-example-data-results-cermine:
-	$(MAKE) TOOL=cermine .update-example-data-results
-
-
-update-example-data-results-cermine-temp:
-	$(MAKE) EVALUATION_RESULTS_OUTPUT_PATH=/tmp update-example-data-results-cermine
-
-
-update-example-data-results-grobid-tei:
-	$(MAKE) TOOL=grobid-tei .update-example-data-results
-
-
-update-example-data-results-grobid-tei-temp:
-	$(MAKE) EVALUATION_RESULTS_OUTPUT_PATH=/tmp update-example-data-results-grobid-tei
-
-
-update-example-data-results: \
-	update-example-data-results-cermine update-example-data-results-grobid-tei 
-
-
-update-example-data-results-temp: \
-	update-example-data-results-cermine-temp update-example-data-results-grobid-tei-temp
-
-
-update-example-data-notebooks-summary:
-	$(JUPYTER_RUN) update-notebook-and-check-no-errors.sh \
-		conversion-results-summary.ipynb "$(NOTEBOOK_OUTPUT_FILE)"
-
-
-update-example-data-notebooks-details:
-	$(JUPYTER_RUN) update-notebook-and-check-no-errors.sh \
-		conversion-results-details.ipynb "$(NOTEBOOK_OUTPUT_FILE)"
-
-
-update-example-data-notebooks: \
-	update-example-data-notebooks-summary update-example-data-notebooks-details
-
-
-update-example-data-notebooks-temp:
-	$(MAKE) NOTEBOOK_OUTPUT_FILE="/tmp/dummy.ipynb" update-example-data-notebooks
-
-
-jupyter-build:
-	if [ "$(NO_BUILD)" != "y" ]; then \
-		$(DOCKER_COMPOSE) build sciencebeam-judge-jupyter; \
-	fi
-
-
-jupyter-shell: jupyter-build
-	$(DOCKER_COMPOSE) run --rm sciencebeam-judge-jupyter bash
-
-
-jupyter-start: jupyter-build
-	$(DOCKER_COMPOSE) up -d sciencebeam-judge-jupyter
-
-
-jupyter-logs:
-	$(DOCKER_COMPOSE) logs -f sciencebeam-judge-jupyter
-
-
-jupyter-stop:
-	$(DOCKER_COMPOSE) down
-
-
-ci-build-all:
-	$(DOCKER_COMPOSE_CI) build --parallel
-
-
-ci-test:
-	$(MAKE) DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" \
-		RUN_NAME="ci-test" \
-		test
-
-
 ci-test-run-evaluation:
-	$(MAKE) DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" \
-		RUN_NAME="ci-test-run-evaluation" \
-		JUDGE_SERVICE="$(JUDGE_SERVICE)" update-example-data-results-temp
+	$(MAKE) dev-test-run-evaluation
 
 
 ci-test-evaluate-and-update-notebooks:
-	$(MAKE) DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" \
-		RUN_NAME="ci-test-evaluate-and-update-notebooks" \
-		JUDGE_SERVICE="$(JUDGE_SERVICE)" \
-		update-example-data-results update-example-data-notebooks-temp
-
-
-ci-clean:
-	$(DOCKER_COMPOSE_CI) down -v
+	$(MAKE) dev-test-evaluate-and-update-notebooks

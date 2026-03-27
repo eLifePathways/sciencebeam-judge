@@ -1,39 +1,7 @@
 version: 2
 updates:
-- package-ecosystem: docker
+- package-ecosystem: uv
   directory: "/"
   schedule:
     interval: daily
   open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: python
-    versions:
-    - "< 4, >= 3.a"
-- package-ecosystem: pip
-  directory: "/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: configparser
-    versions:
-    - "> 3.7.1, < 3.8"
-  - dependency-name: pandas
-    versions:
-    - ">= 0.25.a, < 0.26"
-  - dependency-name: pytest
-    versions:
-    - ">= 5.a, < 6"
-  - dependency-name: pylint
-    versions:
-    - 2.7.0
-    - 2.7.1
-    - 2.7.2
-    - 2.7.3
-  - dependency-name: ipython
-    versions:
-    - 7.21.0
-  - dependency-name: pandas
-    versions:
-    - 1.2.1
-    - 1.2.2
