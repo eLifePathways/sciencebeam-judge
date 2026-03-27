@@ -12,6 +12,7 @@ from sciencebeam_judge.evaluation_config import (
     get_scoring_types_by_field_map_from_config,
     DEFAULT_EVALUATION_YAML_FILENAME
 )
+from sciencebeam_judge.resources import DEFAULT_EVALUATION_SCHEMA_PATH
 
 
 class TestParseEvaluationConfig:
@@ -33,7 +34,7 @@ class TestParseEvaluationConfig:
 class TestParseEvaluationYamlConfig:
     def test_should_validate(self):
         config_json = yaml.safe_load(Path(DEFAULT_EVALUATION_YAML_FILENAME).read_text())
-        json_schema = json.loads(Path('evaluation.schema.json').read_text())
+        json_schema = json.loads(Path(DEFAULT_EVALUATION_SCHEMA_PATH).read_text())
         jsonschema.validate(config_json, json_schema)
 
     def test_should_parse_default_config_from_stream(self):

@@ -19,19 +19,26 @@ make dev-install
 
 ## Configuration
 
+The default configuration files are bundled with the package and used automatically.
+They can be overridden by passing the relevant CLI arguments explicitly.
+
 ### XML Mapping
 
-The [xml-mapping.conf](xml-mapping.conf) configures how fields should be extracted from the XML.
-The format of that file is documented within the default mapping file ([xml-mapping.conf](xml-mapping.conf)).
+The [xml-mapping.conf](sciencebeam_judge/resources/xml-mapping.conf) configures how fields should be extracted from the XML.
+The format of that file is documented within the default mapping file.
 The default configuration contains mapping for JATS and TEI.
+
+To use a custom mapping, pass `--xml-mapping=/path/to/xml-mapping.conf`.
 
 ### Evaluation Configuration
 
-The [evaluation.conf](evaluation.conf) allows further evaluation details to be configured.
+The [evaluation.conf](sciencebeam_judge/resources/evaluation.conf) allows further evaluation details to be configured.
 For example the *scoring type* defines, how a field should be evaluated as (e.g. `string` or `list`).
 
-An additional [evaluation.yml](evaluation.yml) has the same function as [evaluation.conf](evaluation.conf), but allows for more structured configuration.
+An additional [evaluation.yml](sciencebeam_judge/resources/evaluation.yml) has the same function as [evaluation.conf](sciencebeam_judge/resources/evaluation.conf), but allows for more structured configuration.
 (The content of `evaluation.conf` will likely migrate to `evaluation.yml` in the future)
+
+To use a custom config, pass `--evaluation-config=/path/to/evaluation.conf` or `--evaluation-yaml-config=/path/to/evaluation.yml`.
 
 ## File Lists
 
