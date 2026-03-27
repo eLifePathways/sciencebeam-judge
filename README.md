@@ -96,7 +96,7 @@ uv run python -m sciencebeam_judge.evaluation_pipeline \
   [--num_workers=<number of workers>]
 ```
 
-For example to evaluate the provided `example-data` for _cermine_ and _grobid-tei_:
+For example to evaluate the provided `example-data` for *cermine* and *grobid-tei*:
 
 ```bash
 make dev-update-example-data-results
@@ -141,7 +141,7 @@ It is provided as a reference evaluation.
 Use the `sciencebeam_judge.evaluation_pipeline` command (see above),
 which will generate the GROBID output (in addition to the CSV files).
 
-Note: it will only include scores for the _scoring type_ `string`.
+Note: it will only include scores for the *scoring type* `string`.
 
 ## Extract Fields
 
