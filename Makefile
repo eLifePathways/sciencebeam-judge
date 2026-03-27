@@ -44,7 +44,7 @@ venv-create:
 
 
 dev-install:
-	uv sync --frozen
+	uv sync --frozen --all-groups
 
 
 dev-venv: venv-create dev-install
@@ -112,6 +112,28 @@ dev-update-example-data-results: \
 
 dev-test-run-evaluation: \
 	dev-update-example-data-results-cermine-temp dev-update-example-data-results-grobid-tei-temp
+
+
+dev-update-example-data-notebooks-summary:
+	uv run bash scripts/jupyter/update-notebook-and-check-no-errors.sh \
+		notebooks/conversion-results-summary.ipynb "$(NOTEBOOK_OUTPUT_FILE)"
+
+
+dev-update-example-data-notebooks-details:
+	uv run bash scripts/jupyter/update-notebook-and-check-no-errors.sh \
+		notebooks/conversion-results-details.ipynb "$(NOTEBOOK_OUTPUT_FILE)"
+
+
+dev-update-example-data-notebooks: \
+	dev-update-example-data-notebooks-summary dev-update-example-data-notebooks-details
+
+
+dev-update-example-data-notebooks-temp:
+	$(MAKE) NOTEBOOK_OUTPUT_FILE="/tmp/dummy.ipynb" dev-update-example-data-notebooks
+
+
+dev-test-evaluate-and-update-notebooks: \
+	dev-update-example-data-results dev-update-example-data-notebooks-temp
 
 
 dev-distance-matching-profile:
@@ -303,10 +325,7 @@ ci-test-run-evaluation:
 
 
 ci-test-evaluate-and-update-notebooks:
-	$(MAKE) DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" \
-		RUN_NAME="ci-test-evaluate-and-update-notebooks" \
-		JUDGE_SERVICE="$(JUDGE_SERVICE)" \
-		update-example-data-results update-example-data-notebooks-temp
+	$(MAKE) dev-test-evaluate-and-update-notebooks
 
 
 ci-clean:

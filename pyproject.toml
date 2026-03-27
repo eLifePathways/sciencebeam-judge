@@ -23,6 +23,14 @@ dependencies = [
 ]
 
 [dependency-groups]
+notebook = [
+    "ipykernel",
+    "matplotlib",
+    "nbconvert",
+    "pandas",
+    "Markdown",
+]
+
 dev = [
     "apache-beam[gcp]>=2.50.0",
     "anyio<4",

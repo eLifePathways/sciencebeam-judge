@@ -55,6 +55,12 @@ jobs:
       - name: Run evaluation
         run: make dev-test-run-evaluation
 
+      - name: Install notebook dependencies
+        run: uv sync --group notebook
+
+      - name: Run evaluation and update notebooks
+        run: make dev-test-evaluate-and-update-notebooks
+
       - name: Show determined Python package version
         run: echo "${{ steps.set_tags.outputs.python_package_version }}"
 
