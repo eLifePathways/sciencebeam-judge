@@ -189,6 +189,14 @@ dev-distance-matching-profile-example-10:
 		$(PROFILE_ARGS)
 
 
+dev-build-python-readme:
+	$(PYTHON) scripts/dev/update_readme.py \
+		--source=./docs/python_library.md \
+		--target=./docs/generated_python_library.md \
+		--source-base-path=docs \
+		--link-prefix=https://github.com/elifesciences/sciencebeam-judge/blob/main
+
+
 ci-test-run-evaluation:
 	$(MAKE) dev-test-run-evaluation
 

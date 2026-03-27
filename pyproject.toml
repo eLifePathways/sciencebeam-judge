@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "sciencebeam-judge"
 version = "0.0.1"
 description = "ScienceBeam Judge"
+readme = "docs/generated_python_library.md"
 requires-python = ">=3.10"
 dependencies = [
     "configparser>=5.2.0",

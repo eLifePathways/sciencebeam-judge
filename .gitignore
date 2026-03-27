@@ -10,3 +10,5 @@ beam-temp*
 .ipynb_checkpoints
 
 *.pyc
+
+/docs/generated_python_library.md
