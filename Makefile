@@ -76,13 +76,42 @@ dev-watch:
 dev-test: dev-lint dev-pytest
 
 
-dev-update-example-data-results:
+.dev-update-example-data-results:
 	$(PYTHON) -m sciencebeam_judge.evaluation_pipeline \
 		--target-file-list $(EXAMPLE_DATA_EXPECTED_BASE_PATH)/file-list.tsv \
 		--target-file-column=xml_url \
-		--prediction-file-list $(EXAMPLE_DATA_ACTUAL_BASE_PATH)/file-list.lst \
-		--output-path .temp/evaluation-results \
-		--sequential
+		--prediction-file-list ./example-data/pmc-sample-1943-cc-by-subset-results/$(TOOL)/file-list.lst \
+		--output-path $(EVALUATION_RESULTS_OUTPUT_PATH) \
+		--sequential \
+		$(EVALUATE_ARGS)
+
+
+dev-update-example-data-results-cermine:
+	$(MAKE) TOOL=cermine \
+		EVALUATION_RESULTS_OUTPUT_PATH=./example-data/pmc-sample-1943-cc-by-subset-results/cermine/evaluation-results \
+		.dev-update-example-data-results
+
+
+dev-update-example-data-results-cermine-temp:
+	$(MAKE) TOOL=cermine EVALUATION_RESULTS_OUTPUT_PATH=/tmp .dev-update-example-data-results
+
+
+dev-update-example-data-results-grobid-tei:
+	$(MAKE) TOOL=grobid-tei \
+		EVALUATION_RESULTS_OUTPUT_PATH=./example-data/pmc-sample-1943-cc-by-subset-results/grobid-tei/evaluation-results \
+		.dev-update-example-data-results
+
+
+dev-update-example-data-results-grobid-tei-temp:
+	$(MAKE) TOOL=grobid-tei EVALUATION_RESULTS_OUTPUT_PATH=/tmp .dev-update-example-data-results
+
+
+dev-update-example-data-results: \
+	dev-update-example-data-results-cermine dev-update-example-data-results-grobid-tei
+
+
+dev-test-run-evaluation: \
+	dev-update-example-data-results-cermine-temp dev-update-example-data-results-grobid-tei-temp
 
 
 dev-distance-matching-profile:
@@ -270,9 +299,7 @@ ci-test:
 
 
 ci-test-run-evaluation:
-	$(MAKE) DOCKER_COMPOSE="$(DOCKER_COMPOSE_CI)" \
-		RUN_NAME="ci-test-run-evaluation" \
-		JUDGE_SERVICE="$(JUDGE_SERVICE)" update-example-data-results-temp
+	$(MAKE) dev-test-run-evaluation
 
 
 ci-test-evaluate-and-update-notebooks:

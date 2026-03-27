@@ -52,6 +52,9 @@ jobs:
       - name: Unit tests
         run: make dev-pytest
 
+      - name: Run evaluation
+        run: make dev-test-run-evaluation
+
       - name: Show determined Python package version
         run: echo "${{ steps.set_tags.outputs.python_package_version }}"
 
