@@ -47,6 +47,10 @@ dev = [
     "types-requests>=2.26.0",
 ]
 
+[[tool.mypy.overrides]]
+module = ["numpy", "numpy.*"]
+follow_imports = "skip"
+
 [tool.setuptools]
 include-package-data = true
 
