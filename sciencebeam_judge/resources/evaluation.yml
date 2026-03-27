@@ -1,0 +1,89 @@
+custom:
+  fields:
+    # Special evaluation of "deleted" (or "lost") text
+    - name: body_section_paragraphs_only_deleted_text
+      evaluation_type: deleted_text
+      expected:
+        field_names:
+          - body_section_paragraphs
+      actual:
+        field_names:
+          - body_section_paragraphs
+    - name: body_section_paragraphs_deleted_text
+      evaluation_type: deleted_text
+      expected:
+        field_names:
+          - body_section_paragraphs
+      actual:
+        field_names:
+          - all_section_paragraphs
+          - all_section_label_titles
+          - table_label_captions
+          - figure_label_captions
+          - abstract
+          - reference_text
+          - title
+    - name: all_section_paragraphs_only_deleted_text
+      evaluation_type: deleted_text
+      expected:
+        field_names:
+          - all_section_paragraphs
+      actual:
+        field_names:
+          - all_section_paragraphs
+    - name: all_section_paragraphs_deleted_text
+      evaluation_type: deleted_text
+      expected:
+        field_names:
+          - all_section_paragraphs
+      actual:
+        field_names:
+          - all_section_paragraphs
+          - all_section_label_titles
+          - table_label_captions
+          - figure_label_captions
+          - abstract
+          - reference_text
+          - title
+    # Special evaluation of "bounding box"
+    - name: figure_graphic_bbox_intersection
+      evaluation_type: bounding_box_intersection
+      evaluation_type_config:
+        scoring_type: partial_ulist
+      expected:
+        field_names:
+          - figure_graphic_bbox
+      actual:
+        field_names:
+          - figure_graphic_bbox
+    - name: body_figure_graphic_bbox_intersection
+      evaluation_type: bounding_box_intersection
+      evaluation_type_config:
+        scoring_type: partial_ulist
+      expected:
+        field_names:
+          - body_figure_graphic_bbox
+      actual:
+        field_names:
+          - body_figure_graphic_bbox
+    # Special evaluation of "bounding box" (docbank like)
+    - name: figure_graphic_bbox_intersection_area
+      evaluation_type: bounding_box_intersection_area
+      evaluation_type_config:
+        resolution: 1000
+      expected:
+        field_names:
+          - figure_graphic_bbox
+      actual:
+        field_names:
+          - figure_graphic_bbox
+    - name: body_figure_graphic_bbox_intersection_area
+      evaluation_type: bounding_box_intersection_area
+      evaluation_type_config:
+        resolution: 1000
+      expected:
+        field_names:
+          - body_figure_graphic_bbox
+      actual:
+        field_names:
+          - body_figure_graphic_bbox

@@ -15,6 +15,7 @@ import lorem
 
 from sciencebeam_judge.parsing.xml import parse_xml, parse_xml_mapping
 from sciencebeam_judge.parsing.xpath.xpath_functions import register_functions
+from sciencebeam_judge.resources import DEFAULT_XML_MAPPING_PATH
 
 from sciencebeam_judge.evaluation.scoring_methods.scoring_methods import levenshtein_score
 
@@ -234,7 +235,7 @@ def load_example_data_and_profile(
 
 def get_default_xml_mapping():
     register_functions()
-    return parse_xml_mapping('./xml-mapping.conf')
+    return parse_xml_mapping(DEFAULT_XML_MAPPING_PATH)
 
 
 def main(argv: List[str] = None):

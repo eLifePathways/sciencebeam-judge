@@ -90,6 +90,7 @@ from .evaluation.document_scoring import (
 from .parsing.xpath.xpath_functions import register_functions
 
 from .default_field_names import DEFAULT_EXTRACTION_FIELDS
+from .resources import DEFAULT_XML_MAPPING_PATH, DEFAULT_EVALUATION_CONFIG_PATH
 
 
 DEFAULT_SCORE_MEASURES = [
@@ -541,13 +542,13 @@ def add_main_args(parser):
     config_group = parser.add_argument_group('config')
     config_group.add_argument(
         '--xml-mapping', type=str,
-        default='xml-mapping.conf',
+        default=DEFAULT_XML_MAPPING_PATH,
         help='filename to the xml mapping configuration'
     )
 
     config_group.add_argument(
         '--evaluation-config', type=str,
-        default='evaluation.conf',
+        default=DEFAULT_EVALUATION_CONFIG_PATH,
         help='filename to the evaluation configuration'
     )
 

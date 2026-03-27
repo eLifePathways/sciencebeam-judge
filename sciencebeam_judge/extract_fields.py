@@ -12,6 +12,7 @@ from sciencebeam_judge.parsing.xml import parse_xml, parse_xml_mapping
 from sciencebeam_judge.parsing.xpath.xpath_functions import register_functions
 
 from sciencebeam_judge.evaluation_utils import comma_separated_str_to_list
+from sciencebeam_judge.resources import DEFAULT_XML_MAPPING_PATH
 
 
 LOGGER = logging.getLogger(__name__)
@@ -36,7 +37,7 @@ def parse_args(argv: List[str] = None):
     config_group = parser.add_argument_group('config')
     config_group.add_argument(
         '--xml-mapping', type=str,
-        default='xml-mapping.conf',
+        default=DEFAULT_XML_MAPPING_PATH,
         help='filename to the xml mapping configuration'
     )
     return parser.parse_args(argv)

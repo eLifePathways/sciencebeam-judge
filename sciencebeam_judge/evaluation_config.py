@@ -6,9 +6,10 @@ from sciencebeam_utils.utils.string import parse_list
 
 from .utils.string import parse_dict
 from .utils.config import parse_config_as_dict
+from .resources import DEFAULT_EVALUATION_YAML_PATH
 
 
-DEFAULT_EVALUATION_YAML_FILENAME = 'evaluation.yml'
+DEFAULT_EVALUATION_YAML_FILENAME = DEFAULT_EVALUATION_YAML_PATH
 
 
 class CustomEvaluationFieldSourceConfig(NamedTuple):
