@@ -4977,7 +4977,7 @@ wheels = [
 
 [[package]]
 name = "sciencebeam-alignment"
-version = "0.0.7"
+version = "0.0.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fuzzywuzzy" },
@@ -4985,7 +4985,7 @@ dependencies = [
     { name = "numpy", version = "2.4.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
     { name = "six" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/bf/6d/1271fedb4dbfbe4e546caabde27c1547144ca092f2468411eebeb4cbb7b5/sciencebeam_alignment-0.0.7.tar.gz", hash = "sha256:9e5c1ce2c81f55ab89cfb20f7d121511e1a0279cd1778fcc5bf04a5a7fe50f05", size = 181710, upload-time = "2026-03-06T12:14:25.755Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f4/48/1fd270b9276de6fb36344d02815c41625b442df3c8177404fa45e9894e6c/sciencebeam_alignment-0.0.8.tar.gz", hash = "sha256:53253153563765d2ba71ca7f44f300e7ae11a7562bae1d9735e730dd84180e71", size = 181556, upload-time = "2026-05-20T18:05:54.414Z" }
 
 [[package]]
 name = "sciencebeam-judge"
@@ -5039,10 +5039,10 @@ requires-dist = [
     { name = "future", specifier = ">=0.18.2" },
     { name = "lxml", specifier = ">=4.9.0" },
     { name = "natsort", specifier = ">=8.0.0" },
-    { name = "numpy", specifier = ">=2.0.0" },
+    { name = "numpy", specifier = ">=1.21.0" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "regex", specifier = ">=2022.0.0" },
-    { name = "sciencebeam-alignment", specifier = ">=0.0.7" },
+    { name = "sciencebeam-alignment", specifier = ">=0.0.8" },
     { name = "sciencebeam-utils", specifier = ">=0.1.4" },
     { name = "tqdm", specifier = ">=4.62.0" },
     { name = "typing-extensions", specifier = ">=4.0.0" },
