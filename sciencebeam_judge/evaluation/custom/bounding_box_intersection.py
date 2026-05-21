@@ -11,7 +11,7 @@ from sciencebeam_judge.utils.bounding_box import (
 from sciencebeam_judge.evaluation.metrics import (
     f1_for_precision_recall,
     precision_for_tp_fp,
-    recall_for_tp_fn_fp
+    recall_for_tp_fn
 )
 from sciencebeam_judge.evaluation.match_scoring import MatchScore
 from sciencebeam_judge.evaluation.scoring_methods.scoring_methods import ScoringMethod
@@ -136,7 +136,7 @@ def get_page_bounding_box_list_area_match_score_obj(
     false_positive = round(actual_area - intersection_area)
     false_negative = round(expected_area - intersection_area)
     precision = precision_for_tp_fp(true_positive, false_positive)
-    recall = recall_for_tp_fn_fp(true_positive, false_negative, false_positive)
+    recall = recall_for_tp_fn(true_positive, false_negative)
     f1 = f1_for_precision_recall(precision, recall)
     return MatchScore(
         f1,

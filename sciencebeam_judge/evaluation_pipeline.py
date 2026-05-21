@@ -260,6 +260,7 @@ class SummaryOutputColumns:
     PRECISION = 'precision'
     RECALL = 'recall'
     F1 = 'f1'
+    JACCARD = 'jaccard'
 
 
 DEFAULT_SUMMARY_OUTPUT_COLUMNS = [
@@ -275,7 +276,8 @@ DEFAULT_SUMMARY_OUTPUT_COLUMNS = [
     SummaryOutputColumns.ACCURACY,
     SummaryOutputColumns.PRECISION,
     SummaryOutputColumns.RECALL,
-    SummaryOutputColumns.F1
+    SummaryOutputColumns.F1,
+    SummaryOutputColumns.JACCARD
 ]
 
 
@@ -346,7 +348,8 @@ def flatten_summary_results(summarised_scores, field_names=None):  # pylint: dis
                 C.ACCURACY: field_scores['accuracy'],
                 C.PRECISION: field_scores['precision'],
                 C.RECALL: field_scores['recall'],
-                C.F1: field_scores['f1']
+                C.F1: field_scores['f1'],
+                C.JACCARD: field_scores['jaccard']
             })
         for stats_name in ['micro', 'macro']:
             stats = summary[stats_name]
@@ -358,7 +361,8 @@ def flatten_summary_results(summarised_scores, field_names=None):  # pylint: dis
                 C.ACCURACY: stats['accuracy'],
                 C.PRECISION: stats['precision'],
                 C.RECALL: stats['recall'],
-                C.F1: stats['f1']
+                C.F1: stats['f1'],
+                C.JACCARD: stats['jaccard']
             })
     return flat_result
 

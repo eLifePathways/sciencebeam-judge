@@ -36,7 +36,7 @@ def get_logger():
 
 
 def format_summarised_results(summarised_results, keys):
-    score_fields = ['accuracy', 'precision', 'recall', 'f1']
+    score_fields = ['accuracy', 'precision', 'recall', 'f1', 'jaccard']
     summary_scores = [
         (k, summarised_results['by-field'][k]['scores'])
         for k in keys
@@ -66,7 +66,7 @@ def format_summarised_results(summarised_results, keys):
         else x
         for x in row
     ] for row in rows]
-    column_widths = [20, 10, 10, 10, 10, 20]
+    column_widths = [20, 10, 10, 10, 10, 10, 20]
     rows = [[
         x.rjust(c, ' ')
         for x, c in zip(row, column_widths)

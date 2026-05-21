@@ -207,6 +207,7 @@ class TestFlattenSummaryResults:
         scores = {
             'accuracy': 1.0,
             'f1': 1.0,
+            'jaccard': 1.0,
             'precision': 1.0,
             'recall': 1.0
         }
@@ -245,7 +246,8 @@ class TestFlattenSummaryResults:
             SummaryOutputColumns.ACCURACY: scores['accuracy'],
             SummaryOutputColumns.PRECISION: scores['precision'],
             SummaryOutputColumns.RECALL: scores['recall'],
-            SummaryOutputColumns.F1: scores['f1']
+            SummaryOutputColumns.F1: scores['f1'],
+            SummaryOutputColumns.JACCARD: scores['jaccard']
         }
         for stats_name, result_item in zip(['micro', 'macro'], result[1:]):
             assert result_item == {
@@ -256,7 +258,8 @@ class TestFlattenSummaryResults:
                 SummaryOutputColumns.ACCURACY: scores['accuracy'],
                 SummaryOutputColumns.PRECISION: scores['precision'],
                 SummaryOutputColumns.RECALL: scores['recall'],
-                SummaryOutputColumns.F1: scores['f1']
+                SummaryOutputColumns.F1: scores['f1'],
+                SummaryOutputColumns.JACCARD: scores['jaccard']
             }
 
 
