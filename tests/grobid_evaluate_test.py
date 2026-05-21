@@ -14,7 +14,7 @@ from sciencebeam_judge.grobid_evaluate import (
 
 FIELD_1 = 'field1'
 
-SCORE_FIELDS = ['accuracy', 'precision', 'recall', 'f1']
+SCORE_FIELDS = ['accuracy', 'precision', 'recall', 'f1', 'jaccard']
 
 SCORES = {k: 1.0 for k in SCORE_FIELDS}
 
@@ -38,12 +38,12 @@ FIELD_1_REPORT = (
 
   ===== Field-level results =====
 
-                 label   accuracy  precision     recall         f1
+                 label   accuracy  precision     recall         f1    jaccard
 
-              field1     100.00     100.00     100.00     100.00
+              field1     100.00     100.00     100.00     100.00     100.00
 
-          all fields     100.00     100.00     100.00     100.00      (micro average)
-              100.00     100.00     100.00     100.00 (macro average)
+          all fields     100.00     100.00     100.00     100.00     100.00      (micro average)
+              100.00     100.00     100.00     100.00     100.00 (macro average)
     '''
 )
 

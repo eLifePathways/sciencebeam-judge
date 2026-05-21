@@ -4,6 +4,11 @@ import numpy as np
 
 from sciencebeam_judge.evaluation.document_scoring import DocumentScoringProps
 
+from sciencebeam_judge.evaluation.metrics import (
+    jaccard_index,
+    recall_for_tp_fn
+)
+
 from sciencebeam_judge.evaluation.score_aggregation import (
     compact_scores,
     combine_scores,
@@ -11,7 +16,6 @@ from sciencebeam_judge.evaluation.score_aggregation import (
     summarise_binary_results,
     summarise_combined_document_scores_with_count,
     precision_for_tp_fp,
-    recall_for_tp_fn_fp,
     f1_for_precision_recall,
     SummaryScoresProps
 )
@@ -176,9 +180,10 @@ class TestSummariseBinaryResults:
         assert key1_totals.get('true_positive') == 1
         assert key1_totals.get('false_positive') == 1
         assert key1_totals.get('false_negative') == 0
-        assert key1_scores.get('f1') == 0.5
         assert key1_scores.get('precision') == 0.5
-        assert key1_scores.get('recall') == 0.5
+        assert key1_scores.get('recall') == 1.0
+        assert key1_scores.get('jaccard') == 0.5
+        assert key1_scores.get('f1') == f1_for_precision_recall(0.5, 1.0)
         # since there is no other field
         assert result.get('total') == key1_totals
         assert result.get('micro') == key1_scores
@@ -207,8 +212,9 @@ class TestSummariseBinaryResults:
         assert key1_totals.get('false_positive') == 1
         assert key1_totals.get('false_negative') == 0
         assert key1_scores.get('precision') == 0.5
-        assert key1_scores.get('recall') == 0.5
-        assert key1_scores.get('f1') == 0.5
+        assert key1_scores.get('recall') == 1.0
+        assert key1_scores.get('jaccard') == 0.5
+        assert key1_scores.get('f1') == f1_for_precision_recall(0.5, 1.0)
 
         key2_results = result.get('by-field', {}).get('key2', {})
         key2_totals = key2_results.get('total', {})
@@ -242,14 +248,11 @@ class TestSummariseBinaryResults:
             key1_totals.get('false_positive') +
             key2_totals.get('false_positive')
         )
-        assert micro_avg.get('recall') == recall_for_tp_fn_fp(
-            key1_totals.get('true_positive') +
-            key2_totals.get('true_positive'),
-            key1_totals.get('false_negative') +
-            key2_totals.get('false_negative'),
-            key1_totals.get('false_positive') +
-            key2_totals.get('false_positive')
-        )
+        total_tp = key1_totals.get('true_positive') + key2_totals.get('true_positive')
+        total_fn = key1_totals.get('false_negative') + key2_totals.get('false_negative')
+        total_fp = key1_totals.get('false_positive') + key2_totals.get('false_positive')
+        assert micro_avg.get('recall') == recall_for_tp_fn(total_tp, total_fn)
+        assert micro_avg.get('jaccard') == jaccard_index(total_tp, total_fn, total_fp)
         assert micro_avg.get('f1') == f1_for_precision_recall(
             micro_avg.get('precision'),
             micro_avg.get('recall')

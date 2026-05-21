@@ -3,67 +3,67 @@
 
   ===== Field-level results =====
 
-                 label   accuracy  precision     recall         f1
+                 label   accuracy  precision     recall         f1    jaccard
 
-               title      98.65      70.00      70.00      70.00
-            abstract      96.85      28.57      22.22      25.00
-first_author_surname      95.50       0.00       0.00       0.00
-corresp_author_surnames      99.55       0.00       0.00       0.00
-first_author_given_name      95.50       0.00       0.00       0.00
-corresp_author_given_names      99.55       0.00       0.00       0.00
-first_author_full_name      96.85      30.00      30.00      30.00
-corresp_author_full_names      99.55       0.00       0.00       0.00
-corresp_author_emails     100.00       0.00       0.00       0.00
-first_body_section_paragraph      95.50       0.00       0.00       0.00
-     acknowledgement      96.85       0.00       0.00       0.00
-first_back_section_paragraph      95.95       0.00       0.00       0.00
-first_reference_text      95.50       0.00       0.00       0.00
-first_reference_title     100.00     100.00     100.00     100.00
-first_reference_year      98.65      70.00      70.00      70.00
-first_reference_source      98.20      60.00      60.00      60.00
-first_reference_publication_type      95.50       0.00       0.00       0.00
-first_reference_volume      99.10      75.00      75.00      75.00
-first_reference_fpage      99.10      75.00      75.00      75.00
-first_reference_lpage      99.10      75.00      75.00      75.00
- first_reference_doi     100.00       0.00       0.00       0.00
-first_reference_pmid      97.75       0.00       0.00       0.00
-first_reference_pmcid     100.00       0.00       0.00       0.00
-first_all_section_paragraph      95.50       0.00       0.00       0.00
+               title      98.65      70.00     100.00      82.35      70.00
+            abstract      96.85      28.57      50.00      36.36      22.22
+first_author_surname      95.50       0.00       0.00       0.00       0.00
+corresp_author_surnames      99.55       0.00       0.00       0.00       0.00
+first_author_given_name      95.50       0.00       0.00       0.00       0.00
+corresp_author_given_names      99.55       0.00       0.00       0.00       0.00
+first_author_full_name      96.85      30.00     100.00      46.15      30.00
+corresp_author_full_names      99.55       0.00       0.00       0.00       0.00
+corresp_author_emails     100.00       0.00       0.00       0.00       0.00
+first_body_section_paragraph      95.50       0.00       0.00       0.00       0.00
+     acknowledgement      96.85       0.00       0.00       0.00       0.00
+first_back_section_paragraph      95.95       0.00       0.00       0.00       0.00
+first_reference_text      95.50       0.00       0.00       0.00       0.00
+first_reference_title     100.00     100.00     100.00     100.00     100.00
+first_reference_year      98.65      70.00     100.00      82.35      70.00
+first_reference_source      98.20      60.00     100.00      75.00      60.00
+first_reference_publication_type      95.50       0.00       0.00       0.00       0.00
+first_reference_volume      99.10      75.00     100.00      85.71      75.00
+first_reference_fpage      99.10      75.00     100.00      85.71      75.00
+first_reference_lpage      99.10      75.00     100.00      85.71      75.00
+ first_reference_doi     100.00       0.00       0.00       0.00       0.00
+first_reference_pmid      97.75       0.00       0.00       0.00       0.00
+first_reference_pmcid     100.00       0.00       0.00       0.00       0.00
+first_all_section_paragraph      95.50       0.00       0.00       0.00       0.00
 
-          all fields      97.86      46.30      30.49      36.76      (micro average)
-               97.86      24.32      24.05      24.17 (macro average)
+          all fields      97.86      46.30      47.17      46.73      30.49      (micro average)
+               97.86      24.32      35.42      28.31      24.05 (macro average)
 
 
   ==== Levenshtein Matching ===== (Minimum Levenshtein distance at 0.8)
 
   ===== Field-level results =====
 
-                 label   accuracy  precision     recall         f1
+                 label   accuracy  precision     recall         f1    jaccard
 
-               title     100.00     100.00     100.00     100.00
-            abstract      97.44      57.14      44.44      50.00
-first_author_surname      94.87       0.00       0.00       0.00
-corresp_author_surnames      99.49       0.00       0.00       0.00
-first_author_given_name      94.87       0.00       0.00       0.00
-corresp_author_given_names      99.49       0.00       0.00       0.00
-first_author_full_name      97.44      50.00      50.00      50.00
-corresp_author_full_names      99.49       0.00       0.00       0.00
-corresp_author_emails     100.00       0.00       0.00       0.00
-first_body_section_paragraph      97.44      50.00      50.00      50.00
-     acknowledgement      96.41       0.00       0.00       0.00
-first_back_section_paragraph      95.38       0.00       0.00       0.00
-first_reference_text     100.00     100.00     100.00     100.00
-first_reference_title     100.00     100.00     100.00     100.00
-first_reference_year      98.46      70.00      70.00      70.00
-first_reference_source      97.95      60.00      60.00      60.00
-first_reference_publication_type      94.87       0.00       0.00       0.00
-first_reference_volume      98.97      75.00      75.00      75.00
-first_reference_fpage      98.97      75.00      75.00      75.00
-first_reference_lpage      98.97      75.00      75.00      75.00
- first_reference_doi     100.00       0.00       0.00       0.00
-first_reference_pmid      97.44       0.00       0.00       0.00
-first_reference_pmcid     100.00       0.00       0.00       0.00
-first_all_section_paragraph      97.44      50.00      50.00      50.00
+               title     100.00     100.00     100.00     100.00     100.00
+            abstract      97.44      57.14      66.67      61.54      44.44
+first_author_surname      94.87       0.00       0.00       0.00       0.00
+corresp_author_surnames      99.49       0.00       0.00       0.00       0.00
+first_author_given_name      94.87       0.00       0.00       0.00       0.00
+corresp_author_given_names      99.49       0.00       0.00       0.00       0.00
+first_author_full_name      97.44      50.00     100.00      66.67      50.00
+corresp_author_full_names      99.49       0.00       0.00       0.00       0.00
+corresp_author_emails     100.00       0.00       0.00       0.00       0.00
+first_body_section_paragraph      97.44      50.00     100.00      66.67      50.00
+     acknowledgement      96.41       0.00       0.00       0.00       0.00
+first_back_section_paragraph      95.38       0.00       0.00       0.00       0.00
+first_reference_text     100.00     100.00     100.00     100.00     100.00
+first_reference_title     100.00     100.00     100.00     100.00     100.00
+first_reference_year      98.46      70.00     100.00      82.35      70.00
+first_reference_source      97.95      60.00     100.00      75.00      60.00
+first_reference_publication_type      94.87       0.00       0.00       0.00       0.00
+first_reference_volume      98.97      75.00     100.00      85.71      75.00
+first_reference_fpage      98.97      75.00     100.00      85.71      75.00
+first_reference_lpage      98.97      75.00     100.00      85.71      75.00
+ first_reference_doi     100.00       0.00       0.00       0.00       0.00
+first_reference_pmid      97.44       0.00       0.00       0.00       0.00
+first_reference_pmcid     100.00       0.00       0.00       0.00       0.00
+first_all_section_paragraph      97.44      50.00     100.00      66.67      50.00
 
-          all fields      98.14      71.30      46.95      56.62      (micro average)
-               98.14      35.92      35.39      35.62 (macro average)
+          all fields      98.14      71.30      57.89      63.90      46.95      (micro average)
+               98.14      35.92      48.61      40.67      35.39 (macro average)

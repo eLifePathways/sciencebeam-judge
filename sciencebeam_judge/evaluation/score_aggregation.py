@@ -9,8 +9,9 @@ from sciencebeam_utils.utils.collection import extend_dict, iter_flatten, flatte
 
 from sciencebeam_judge.evaluation.metrics import (
     f1_for_precision_recall,
+    jaccard_index,
     precision_for_tp_fp,
-    recall_for_tp_fn_fp
+    recall_for_tp_fn
 )
 
 from .math import safe_mean
@@ -59,13 +60,15 @@ def summary_score(sum_scores):
     tn = sum_scores['true_negative']
     accuracy = (tp + tn) / (tp + fp + tn + fn) if tp + fp + tn + fn > 0 else 0
     precision = precision_for_tp_fp(tp, fp)
-    recall = recall_for_tp_fn_fp(tp, fn, fp)
+    recall = recall_for_tp_fn(tp, fn)
     f1 = f1_for_precision_recall(precision, recall)
+    jaccard = jaccard_index(tp, fn, fp)
     return {
         'accuracy': accuracy,
         'precision': precision,
         'recall': recall,
-        'f1': f1
+        'f1': f1,
+        'jaccard': jaccard
     }
 
 
@@ -140,7 +143,7 @@ def summarise_binary_results(
         'summarise_binary_results, scores.keys=%s, keys=%s', scores.keys(), keys
     )
     keys = [k for k in keys if k in scores]
-    score_fields = ['accuracy', 'precision', 'recall', 'f1']
+    score_fields = ['accuracy', 'precision', 'recall', 'f1', 'jaccard']
     # if not isinstance(scores, list):
     #   scores = [scores]
     total_fields = sum([
