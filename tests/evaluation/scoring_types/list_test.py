@@ -4,7 +4,11 @@ import logging
 
 from abc import ABC, abstractmethod
 
-from sciencebeam_judge.evaluation.match_scoring import MatchScoringProps
+from sciencebeam_judge.evaluation.math import is_close
+from sciencebeam_judge.evaluation.match_scoring import (
+    ContinuousMatchScoringProps,
+    MatchScoringProps,
+)
 from sciencebeam_judge.evaluation.scoring_methods.scoring_methods import ScoringMethodNames
 
 from sciencebeam_judge.evaluation.scoring_types.list import (
@@ -269,3 +273,152 @@ class TestSetScoringType(_TestCommonNonPartialListScoringType):
 class TestPartialSetScoringType(_TestCommonPartialListScoringType):
     def score(self, *args, **kwargs):
         return PARTIAL_SET_SCORING_TYPE.score(*args, **kwargs)
+
+
+EDIT_SIM = ScoringMethodNames.EDIT_SIM
+C = ContinuousMatchScoringProps
+
+
+class TestOrderedListScoringTypeEditSim:
+    def score(self, *args, **kwargs):
+        return ORDERED_LIST_SCORING_TYPE.score(*args, measures=[EDIT_SIM], **kwargs)
+
+    def test_both_empty_is_neutral(self):
+        result = self.score([], [])
+        assert result[EDIT_SIM][C.SIM_SUM] == 0.0
+        assert result[EDIT_SIM][C.EXPECTED_COUNT] == 0
+        assert result[EDIT_SIM][C.PREDICTED_COUNT] == 0
+
+    def test_length_mismatch_expected_longer_is_hard_f1_zero(self):
+        result = self.score(['a', 'b'], ['a'])
+        assert result[EDIT_SIM][C.SIM_SUM] == 0.0
+        assert result[EDIT_SIM][C.EXPECTED_COUNT] == 2
+        assert result[EDIT_SIM][C.PREDICTED_COUNT] == 1
+
+    def test_length_mismatch_actual_longer_is_hard_f1_zero(self):
+        result = self.score(['a'], ['a', 'b'])
+        assert result[EDIT_SIM][C.SIM_SUM] == 0.0
+        assert result[EDIT_SIM][C.EXPECTED_COUNT] == 1
+        assert result[EDIT_SIM][C.PREDICTED_COUNT] == 2
+
+    def test_exact_match_single_item(self):
+        result = self.score(['abc'], ['abc'])
+        assert result[EDIT_SIM][C.SIM_SUM] == 1.0
+        assert result[EDIT_SIM][C.EXPECTED_COUNT] == 1
+        assert result[EDIT_SIM][C.PREDICTED_COUNT] == 1
+
+    def test_exact_match_multiple_items(self):
+        result = self.score(['a', 'b'], ['a', 'b'])
+        assert result[EDIT_SIM][C.SIM_SUM] == 2.0
+        assert result[EDIT_SIM][C.EXPECTED_COUNT] == 2
+        assert result[EDIT_SIM][C.PREDICTED_COUNT] == 2
+
+    def test_partial_similarity_accumulates_sim_sum(self):
+        # levenshtein_score('axb', 'ayb') = 1 - 1/3 = 2/3
+        result = self.score(['axb'], ['ayb'])
+        assert is_close(result[EDIT_SIM][C.SIM_SUM], 2 / 3)
+        assert result[EDIT_SIM][C.EXPECTED_COUNT] == 1
+        assert result[EDIT_SIM][C.PREDICTED_COUNT] == 1
+
+
+class TestPartialOrderedListScoringTypeEditSim:
+    def score(self, *args, **kwargs):
+        return PARTIAL_ORDERED_LIST_SCORING_TYPE.score(*args, measures=[EDIT_SIM], **kwargs)
+
+    def test_both_empty_is_neutral(self):
+        result = self.score([], [])
+        assert result[EDIT_SIM][C.SIM_SUM] == 0.0
+        assert result[EDIT_SIM][C.EXPECTED_COUNT] == 0
+        assert result[EDIT_SIM][C.PREDICTED_COUNT] == 0
+        assert result[EDIT_SIM][MatchScoringProps.SUB_SCORES] == []
+
+    def test_expected_longer_gives_recall_penalty(self):
+        # expected=['a','b'], actual=['a'] → item1 sim=1.0 (D), item2 Case B
+        result = self.score(['a', 'b'], ['a'])
+        assert result[EDIT_SIM][C.SIM_SUM] == 1.0
+        assert result[EDIT_SIM][C.EXPECTED_COUNT] == 2
+        assert result[EDIT_SIM][C.PREDICTED_COUNT] == 1
+
+    def test_actual_longer_gives_precision_penalty(self):
+        # expected=['a'], actual=['a','b'] → item1 sim=1.0 (D), item2 Case C
+        result = self.score(['a'], ['a', 'b'])
+        assert result[EDIT_SIM][C.SIM_SUM] == 1.0
+        assert result[EDIT_SIM][C.EXPECTED_COUNT] == 1
+        assert result[EDIT_SIM][C.PREDICTED_COUNT] == 2
+
+    def test_includes_sub_scores(self):
+        result = self.score(['a', 'b'], ['a'])
+        sub_scores = result[EDIT_SIM][MatchScoringProps.SUB_SCORES]
+        assert len(sub_scores) == 2
+        assert sub_scores[0][C.SIM_SUM] == 1.0
+        assert sub_scores[0][C.EXPECTED_COUNT] == 1
+        assert sub_scores[0][C.PREDICTED_COUNT] == 1
+        assert sub_scores[1][C.SIM_SUM] == 0.0
+        assert sub_scores[1][C.EXPECTED_COUNT] == 1
+        assert sub_scores[1][C.PREDICTED_COUNT] == 0
+
+    def test_include_values_stores_per_item_values(self):
+        result = self.score(['a', 'b'], ['a'], include_values=True)
+        sub_scores = result[EDIT_SIM][MatchScoringProps.SUB_SCORES]
+        assert sub_scores[0][MatchScoringProps.EXPECTED] == 'a'
+        assert sub_scores[0][MatchScoringProps.ACTUAL] == 'a'
+        assert sub_scores[1][MatchScoringProps.EXPECTED] == 'b'
+        assert sub_scores[1][MatchScoringProps.ACTUAL] == ''
+
+
+class TestUnorderedListScoringTypeEditSim:
+    def score(self, *args, **kwargs):
+        return UNORDERED_LIST_SCORING_TYPE.score(*args, measures=[EDIT_SIM], **kwargs)
+
+    def test_both_empty_is_neutral(self):
+        result = self.score([], [])
+        assert result[EDIT_SIM][C.SIM_SUM] == 0.0
+        assert result[EDIT_SIM][C.EXPECTED_COUNT] == 0
+        assert result[EDIT_SIM][C.PREDICTED_COUNT] == 0
+
+    def test_length_mismatch_is_hard_f1_zero(self):
+        result = self.score(['a', 'b'], ['a'])
+        assert result[EDIT_SIM][C.SIM_SUM] == 0.0
+        assert result[EDIT_SIM][C.EXPECTED_COUNT] == 2
+        assert result[EDIT_SIM][C.PREDICTED_COUNT] == 1
+
+    def test_exact_match_gives_full_similarity(self):
+        result = self.score(['a', 'b'], ['a', 'b'])
+        assert result[EDIT_SIM][C.SIM_SUM] == 2.0
+        assert result[EDIT_SIM][C.EXPECTED_COUNT] == 2
+        assert result[EDIT_SIM][C.PREDICTED_COUNT] == 2
+
+    def test_different_order_gives_same_similarity(self):
+        result_in_order = self.score(['a', 'b'], ['a', 'b'])
+        result_reordered = self.score(['a', 'b'], ['b', 'a'])
+        assert result_in_order[EDIT_SIM][C.SIM_SUM] == result_reordered[EDIT_SIM][C.SIM_SUM]
+        assert result_reordered[EDIT_SIM][C.EXPECTED_COUNT] == 2
+        assert result_reordered[EDIT_SIM][C.PREDICTED_COUNT] == 2
+
+
+class TestPartialUnorderedListScoringTypeEditSim:
+    def score(self, *args, **kwargs):
+        return PARTIAL_UNORDERED_LIST_SCORING_TYPE.score(*args, measures=[EDIT_SIM], **kwargs)
+
+    def test_expected_longer_gives_recall_penalty(self):
+        result = self.score(['a', 'b'], ['a'])
+        assert result[EDIT_SIM][C.SIM_SUM] == 1.0
+        assert result[EDIT_SIM][C.EXPECTED_COUNT] == 2
+        assert result[EDIT_SIM][C.PREDICTED_COUNT] == 1
+
+    def test_actual_longer_gives_precision_penalty(self):
+        result = self.score(['a'], ['a', 'b'])
+        assert result[EDIT_SIM][C.SIM_SUM] == 1.0
+        assert result[EDIT_SIM][C.EXPECTED_COUNT] == 1
+        assert result[EDIT_SIM][C.PREDICTED_COUNT] == 2
+
+    def test_includes_sub_scores(self):
+        result = self.score(['a', 'b'], ['a'])
+        sub_scores = result[EDIT_SIM][MatchScoringProps.SUB_SCORES]
+        assert len(sub_scores) == 2
+
+    def test_both_empty_is_neutral(self):
+        result = self.score([], [])
+        assert result[EDIT_SIM][C.SIM_SUM] == 0.0
+        assert result[EDIT_SIM][C.EXPECTED_COUNT] == 0
+        assert result[EDIT_SIM][C.PREDICTED_COUNT] == 0
