@@ -28,7 +28,10 @@ from sciencebeam_judge.evaluation_pipeline import (
     SummaryOutputColumns
 )
 
-from sciencebeam_judge.evaluation.match_scoring import MatchScoringProps
+from sciencebeam_judge.evaluation.match_scoring import (
+    ContinuousMatchScoringProps,
+    MatchScoringProps,
+)
 from sciencebeam_judge.evaluation.scoring_methods.scoring_methods import ScoringMethodNames
 from sciencebeam_judge.evaluation.scoring_types.scoring_types import ScoringTypeNames
 from sciencebeam_judge.evaluation.document_scoring import DocumentScoringProps
@@ -162,6 +165,7 @@ class TestFlattenEvaluationResults:
             OutputColumns.FIELD_NAME: FIELD_1,
             OutputColumns.EVALUATION_METHOD: ScoringMethodNames.EXACT,
             OutputColumns.SCORING_TYPE: ScoringTypeNames.STRING,
+            OutputColumns.SCORE: MATCH_SCORE_1[MatchScoringProps.SCORE],
             OutputColumns.TP: MATCH_SCORE_1[MatchScoringProps.TRUE_POSITIVE],
             OutputColumns.FP: MATCH_SCORE_1[MatchScoringProps.FALSE_POSITIVE],
             OutputColumns.FN: MATCH_SCORE_1[MatchScoringProps.FALSE_NEGATIVE],
@@ -171,6 +175,34 @@ class TestFlattenEvaluationResults:
             OutputColumns.EXPECTED_CONTEXT: MATCH_SCORE_1.get(MatchScoringProps.EXPECTED_CONTEXT),
             OutputColumns.ACTUAL_CONTEXT: MATCH_SCORE_1.get(MatchScoringProps.ACTUAL_CONTEXT)
         }]
+
+    def test_continuous_score_puts_sim_sum_in_score_column_and_none_for_tp_fp_fn_tn(self):
+        continuous_match_score = {
+            ContinuousMatchScoringProps.SIM_SUM: 0.85,
+            ContinuousMatchScoringProps.EXPECTED_COUNT: 1,
+            ContinuousMatchScoringProps.PREDICTED_COUNT: 1,
+            MatchScoringProps.EXPECTED: 'expected text',
+            MatchScoringProps.ACTUAL: 'actual text',
+        }
+        evaluation_results = {
+            DataProps.PREDICTION_FILE_URL: PREDICTION_FILE_LIST[0],
+            DataProps.TARGET_FILE_URL: TARGET_FILE_LIST[0],
+            DataProps.EVALUTATION_RESULTS: [{
+                DocumentScoringProps.FIELD_NAME: FIELD_1,
+                DocumentScoringProps.SCORING_METHOD: ScoringMethodNames.EDIT_SIM,
+                DocumentScoringProps.SCORING_TYPE: ScoringTypeNames.STRING,
+                DocumentScoringProps.MATCH_SCORE: continuous_match_score
+            }]
+        }
+        result = flatten_evaluation_results(evaluation_results, field_names=[FIELD_1])
+        assert len(result) == 1
+        assert result[0][OutputColumns.SCORE] == 0.85
+        assert result[0][OutputColumns.TP] is None
+        assert result[0][OutputColumns.FP] is None
+        assert result[0][OutputColumns.FN] is None
+        assert result[0][OutputColumns.TN] is None
+        assert result[0][OutputColumns.EXPECTED] == 'expected text'
+        assert result[0][OutputColumns.ACTUAL] == 'actual text'
 
     def test_should_convert_sub_scores_as_individual_rows(self):
         evaluation_results = {

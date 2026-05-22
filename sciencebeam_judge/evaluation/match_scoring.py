@@ -114,3 +114,54 @@ def get_match_score_obj_for_score_fn(expected, actual, value_f, threshold=1, inc
         value_f(expected, actual),
         threshold=threshold, include_values=include_values
     )
+
+
+class ContinuousMatchScoringProps:
+    SIM_SUM = 'sim_sum'
+    EXPECTED_COUNT = 'expected_count'
+    PREDICTED_COUNT = 'predicted_count'
+
+
+def get_match_score_obj_for_continuous_score(
+    expected: T_Value,
+    actual: T_Value,
+    score: float,
+    include_values: bool = False,
+) -> Dict[str, Any]:
+    """Return a continuous match score dict encoding similarity as sum/count fields.
+
+    Unlike the binary encoding, this preserves partial similarity rather than
+    collapsing it to a threshold pass/fail. The four cases:
+      A) both absent  → neutral (no contribution)
+      B) gold present, prediction absent  → recall penalty
+      C) gold absent, prediction present  → precision penalty (possible hallucination)
+      D) both present → contribute sim to sim_sum and both counts
+    """
+    if not expected and not actual:
+        d: Dict[str, Any] = {
+            ContinuousMatchScoringProps.SIM_SUM: 0.0,
+            ContinuousMatchScoringProps.EXPECTED_COUNT: 0,
+            ContinuousMatchScoringProps.PREDICTED_COUNT: 0,
+        }
+    elif expected and not actual:
+        d = {
+            ContinuousMatchScoringProps.SIM_SUM: 0.0,
+            ContinuousMatchScoringProps.EXPECTED_COUNT: 1,
+            ContinuousMatchScoringProps.PREDICTED_COUNT: 0,
+        }
+    elif not expected and actual:
+        d = {
+            ContinuousMatchScoringProps.SIM_SUM: 0.0,
+            ContinuousMatchScoringProps.EXPECTED_COUNT: 0,
+            ContinuousMatchScoringProps.PREDICTED_COUNT: 1,
+        }
+    else:
+        d = {
+            ContinuousMatchScoringProps.SIM_SUM: score,
+            ContinuousMatchScoringProps.EXPECTED_COUNT: 1,
+            ContinuousMatchScoringProps.PREDICTED_COUNT: 1,
+        }
+    if include_values:
+        d[MatchScoringProps.EXPECTED] = expected
+        d[MatchScoringProps.ACTUAL] = actual
+    return d
