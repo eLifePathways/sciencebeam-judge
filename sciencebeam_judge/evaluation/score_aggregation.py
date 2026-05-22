@@ -3,7 +3,7 @@ from __future__ import division
 import logging
 
 from itertools import groupby
-from typing import Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence
 
 from sciencebeam_utils.utils.collection import extend_dict, iter_flatten, flatten
 
@@ -21,6 +21,8 @@ from .document_scoring import (
     document_score_key_to_props,
     DocumentScoringProps
 )
+
+from .match_scoring import ContinuousMatchScoringProps
 
 
 LOGGER = logging.getLogger(__name__)
@@ -72,6 +74,69 @@ def summary_score(sum_scores):
     }
 
 
+def _is_continuous_score(score: Dict[str, Any]) -> bool:
+    return ContinuousMatchScoringProps.SIM_SUM in score
+
+
+def sum_continuous_scores(scores: List[Dict[str, Any]]) -> Dict[str, Any]:
+    return {
+        ContinuousMatchScoringProps.SIM_SUM: sum(
+            s[ContinuousMatchScoringProps.SIM_SUM] for s in scores
+        ),
+        ContinuousMatchScoringProps.EXPECTED_COUNT: sum(
+            s[ContinuousMatchScoringProps.EXPECTED_COUNT] for s in scores
+        ),
+        ContinuousMatchScoringProps.PREDICTED_COUNT: sum(
+            s[ContinuousMatchScoringProps.PREDICTED_COUNT] for s in scores
+        ),
+    }
+
+
+def continuous_summary_score(sums: Dict[str, Any]) -> Dict[str, float]:
+    sim_sum = sums[ContinuousMatchScoringProps.SIM_SUM]
+    expected_count = sums[ContinuousMatchScoringProps.EXPECTED_COUNT]
+    predicted_count = sums[ContinuousMatchScoringProps.PREDICTED_COUNT]
+    precision = sim_sum / predicted_count if predicted_count else 0.0
+    recall = sim_sum / expected_count if expected_count else 0.0
+    f1 = f1_for_precision_recall(precision, recall)
+    return {'precision': precision, 'recall': recall, 'f1': f1}
+
+
+def summarise_continuous_results(
+    scores: Dict[str, Any],
+    keys: Sequence[str],
+    count: Optional[int] = None
+) -> Dict[str, Any]:
+    scores = {k: force_list(x) for k, x in scores.items()}
+    keys = [k for k in keys if k in scores]
+    score_fields = ['precision', 'recall', 'f1']
+    sum_scores_map = {k: sum_continuous_scores(scores[k]) for k in keys}
+    summary_score_map = {k: continuous_summary_score(sum_scores_map[k]) for k in keys}
+    total_sums = {
+        f: sum(sum_scores_map[k][f] for k in keys)
+        for f in [
+            ContinuousMatchScoringProps.SIM_SUM,
+            ContinuousMatchScoringProps.EXPECTED_COUNT,
+            ContinuousMatchScoringProps.PREDICTED_COUNT,
+        ]
+    }
+    micro_avg = continuous_summary_score(total_sums)
+    macro_avg = {
+        f: safe_mean([summary_score_map[k][f] for k in keys])
+        for f in score_fields
+    }
+    return {
+        'by-field': {
+            k: {'total': sum_scores_map[k], 'scores': summary_score_map[k]}
+            for k in keys
+        },
+        'total': total_sums,
+        'micro': micro_avg,
+        'macro': macro_avg,
+        'count': count,
+    }
+
+
 def compact_scores(scores, total_fields=None, keys=None):
     if not scores:
         return {}
@@ -106,19 +171,23 @@ def groupby_document_score_key(document_scores):
 def combine_and_compact_document_scores(document_scores):
     document_scores = list(document_scores)
     LOGGER.debug('document_scores: %s', document_scores)
-    return [
-        extend_dict(document_score_key_to_props(document_score_key), {
-            DocumentScoringProps.MATCH_SCORE: sum_scores_with_true_negative(
-                [
-                    x[DocumentScoringProps.MATCH_SCORE]
-                    for x in grouped_document_scores
-                ]
-            )
-        })
-        for document_score_key, grouped_document_scores in groupby_document_score_key(
-            document_scores
-        )
-    ]
+    result = []
+    for document_score_key, grouped_document_scores in groupby_document_score_key(
+        document_scores
+    ):
+        match_scores = [
+            x[DocumentScoringProps.MATCH_SCORE]
+            for x in grouped_document_scores
+        ]
+        if match_scores and _is_continuous_score(match_scores[0]):
+            combined = sum_continuous_scores(match_scores)
+        else:
+            combined = sum_scores_with_true_negative(match_scores)
+        result.append(extend_dict(
+            document_score_key_to_props(document_score_key),
+            {DocumentScoringProps.MATCH_SCORE: combined}
+        ))
+    return result
 
 
 def combine_and_compact_document_scores_with_count(document_scores_with_count):
@@ -202,18 +271,23 @@ def summarise_combined_document_scores(document_scores, keys, count=None):
             DocumentScoringProps.SCORING_TYPE: key[0],
             DocumentScoringProps.SCORING_METHOD: key[1]
         }
-    return [
-        extend_dict(key_to_props(key), {
-            SummaryScoresProps.SUMMARY_SCORES: summarise_binary_results(
-                grouped_document_scores_to_scores_by_field_name(
-                    grouped_document_scores
-                ),
-                keys=keys,
-                count=count
+    result = []
+    for key, grouped_document_scores in groupby(sorted(document_scores, key=key_fn), key_fn):
+        scores_by_field = grouped_document_scores_to_scores_by_field_name(
+            grouped_document_scores
+        )
+        first_score = next(iter(scores_by_field.values()), None)
+        summarise_fn = (
+            summarise_continuous_results
+            if first_score is not None and _is_continuous_score(first_score)
+            else summarise_binary_results
+        )
+        result.append(extend_dict(key_to_props(key), {
+            SummaryScoresProps.SUMMARY_SCORES: summarise_fn(
+                scores_by_field, keys=keys, count=count
             )
-        })
-        for key, grouped_document_scores in groupby(sorted(document_scores, key=key_fn), key_fn)
-    ]
+        }))
+    return result
 
 
 def summarise_combined_document_scores_with_count(scores_with_count, keys):

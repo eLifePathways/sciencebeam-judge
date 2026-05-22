@@ -14,6 +14,7 @@ from sciencebeam_judge.evaluation.score_aggregation import (
     combine_scores,
     combine_and_compact_document_scores_with_count,
     summarise_binary_results,
+    summarise_continuous_results,
     summarise_combined_document_scores_with_count,
     precision_for_tp_fp,
     f1_for_precision_recall,
@@ -279,3 +280,92 @@ class TestSummariseCombinedDocumentScoresWithCount:
         summary_scores = actual_summary_scores[0][SummaryScoresProps.SUMMARY_SCORES]
         field1_summary_scores = summary_scores['by-field']['field1']['scores']
         assert field1_summary_scores['f1'] == 1
+
+
+CONTINUOUS_MATCH_SCORE_SIM_08 = {'sim_sum': 0.8, 'expected_count': 1, 'predicted_count': 1}
+CONTINUOUS_MATCH_SCORE_MISS = {'sim_sum': 0.0, 'expected_count': 1, 'predicted_count': 0}
+CONTINUOUS_MATCH_SCORE_HALLUCINATION = {'sim_sum': 0.0, 'expected_count': 0, 'predicted_count': 1}
+
+
+class TestSummariseContinuousResults:
+    def test_perfect_match_gives_f1_one(self):
+        scores = {'field1': [{'sim_sum': 1.0, 'expected_count': 1, 'predicted_count': 1}]}
+        result = summarise_continuous_results(scores, keys=['field1'])
+        field_scores = result['by-field']['field1']['scores']
+        assert field_scores['precision'] == 1.0
+        assert field_scores['recall'] == 1.0
+        assert field_scores['f1'] == 1.0
+
+    def test_corpus_f1_equals_mean_similarity(self):
+        sims = [0.9, 0.6, 1.0]
+        scores = {
+            'field1': [
+                {'sim_sum': s, 'expected_count': 1, 'predicted_count': 1}
+                for s in sims
+            ]
+        }
+        result = summarise_continuous_results(scores, keys=['field1'])
+        field_scores = result['by-field']['field1']['scores']
+        expected_mean = sum(sims) / len(sims)
+        assert abs(field_scores['f1'] - expected_mean) < 1e-9
+
+    def test_miss_reduces_recall_not_precision(self):
+        scores = {
+            'field1': [
+                CONTINUOUS_MATCH_SCORE_SIM_08,
+                CONTINUOUS_MATCH_SCORE_MISS,
+            ]
+        }
+        result = summarise_continuous_results(scores, keys=['field1'])
+        field_scores = result['by-field']['field1']['scores']
+        assert field_scores['precision'] == 0.8
+        assert field_scores['recall'] == 0.4
+        assert field_scores['f1'] == f1_for_precision_recall(0.8, 0.4)
+
+    def test_hallucination_reduces_precision_not_recall(self):
+        scores = {
+            'field1': [
+                CONTINUOUS_MATCH_SCORE_SIM_08,
+                CONTINUOUS_MATCH_SCORE_HALLUCINATION,
+            ]
+        }
+        result = summarise_continuous_results(scores, keys=['field1'])
+        field_scores = result['by-field']['field1']['scores']
+        assert field_scores['precision'] == 0.4
+        assert field_scores['recall'] == 0.8
+        assert field_scores['f1'] == f1_for_precision_recall(0.4, 0.8)
+
+    def test_no_accuracy_or_jaccard_in_scores(self):
+        scores = {'field1': [CONTINUOUS_MATCH_SCORE_SIM_08]}
+        result = summarise_continuous_results(scores, keys=['field1'])
+        field_scores = result['by-field']['field1']['scores']
+        assert 'accuracy' not in field_scores
+        assert 'jaccard' not in field_scores
+
+    def test_macro_avg_is_mean_of_per_field_scores(self):
+        scores = {
+            'field1': [{'sim_sum': 0.9, 'expected_count': 1, 'predicted_count': 1}],
+            'field2': [{'sim_sum': 0.5, 'expected_count': 1, 'predicted_count': 1}],
+        }
+        result = summarise_continuous_results(scores, keys=['field1', 'field2'])
+        assert abs(result['macro']['f1'] - 0.7) < 1e-9
+
+
+class TestSummariseCombinedDocumentScoresWithCountContinuous:
+    def test_continuous_scores_routed_to_continuous_summariser(self):
+        combined_scores_with_count = ([{
+            DocumentScoringProps.FIELD_NAME: 'field1',
+            DocumentScoringProps.SCORING_TYPE: 'string',
+            DocumentScoringProps.SCORING_METHOD: 'edit_sim',
+            DocumentScoringProps.MATCH_SCORE: CONTINUOUS_MATCH_SCORE_SIM_08,
+        }], 1)
+        actual_summary_scores = summarise_combined_document_scores_with_count(
+            combined_scores_with_count, ['field1']
+        )
+        assert len(actual_summary_scores) == 1
+        assert actual_summary_scores[0][DocumentScoringProps.SCORING_METHOD] == 'edit_sim'
+        summary_scores = actual_summary_scores[0][SummaryScoresProps.SUMMARY_SCORES]
+        field_scores = summary_scores['by-field']['field1']['scores']
+        assert abs(field_scores['f1'] - 0.8) < 1e-9
+        assert 'accuracy' not in field_scores
+        assert 'jaccard' not in field_scores

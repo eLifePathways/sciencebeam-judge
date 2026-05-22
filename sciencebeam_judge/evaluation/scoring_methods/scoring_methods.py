@@ -29,6 +29,7 @@ class ScoringMethodNames:
     SOFT = 'soft'
     LEVENSHTEIN = 'levenshtein'
     RATCLIFF_OBERSHELP = 'ratcliff_obershelp'
+    EDIT_SIM = 'edit_sim'
 
 
 EDIT_DISTANCE_APPROXIMATE_FN_LIST = [
@@ -82,12 +83,14 @@ class ScoringMethod:
             scoring_fn: T_Distance_Function,
             approximate_scoring_fn_list: List[T_Distance_Function] = None,
             threshold: float = 1,
-            preprocessing_fn: Callable[[str], str] = None):
+            preprocessing_fn: Callable[[str], str] = None,
+            continuous: bool = False):
         self.name = name
         self.scoring_fn = scoring_fn
         self.approximate_scoring_fn_list = approximate_scoring_fn_list or []
         self.threshold = threshold
         self.preprocessing_fn = preprocessing_fn or IDENTITY_FN
+        self.continuous = continuous
 
     def wrap_with_preprocessing(
         self,
@@ -148,7 +151,17 @@ SCORING_METHODS = [
         ),
         approximate_scoring_fn_list=EDIT_DISTANCE_APPROXIMATE_FN_LIST,
         threshold=0.95
-    )
+    ),
+    ScoringMethod(
+        ScoringMethodNames.EDIT_SIM,
+        type_checked_distance_function(
+            levenshtein_score,
+            Value_Types
+        ),
+        approximate_scoring_fn_list=EDIT_DISTANCE_APPROXIMATE_FN_LIST,
+        preprocessing_fn=strip_punctuation_and_whitespace,
+        continuous=True
+    ),
 ]
 
 ALL_SCORING_METHOD_NAMES = [

@@ -68,7 +68,8 @@ from sciencebeam_judge.grobid_evaluate import (
 )
 
 from .evaluation.match_scoring import (
-    MatchScoringProps
+    ContinuousMatchScoringProps,
+    MatchScoringProps,
 )
 
 from .evaluation.scoring_methods.scoring_methods import (
@@ -95,7 +96,8 @@ from .resources import DEFAULT_XML_MAPPING_PATH, DEFAULT_EVALUATION_CONFIG_PATH
 
 DEFAULT_SCORE_MEASURES = [
     ScoringMethodNames.EXACT,
-    ScoringMethodNames.LEVENSHTEIN
+    ScoringMethodNames.LEVENSHTEIN,
+    ScoringMethodNames.EDIT_SIM
 ]
 
 
@@ -219,6 +221,7 @@ class OutputColumns:
     FIELD_NAME = 'field_name'
     EVALUATION_METHOD = 'evaluation_method'
     SCORING_TYPE = 'scoring_type'
+    SCORE = 'score'
     TP = 'tp'
     FP = 'fp'
     FN = 'fn'
@@ -235,6 +238,7 @@ DEFAULT_OUTPUT_COLUMNS = [
     OutputColumns.FIELD_NAME,
     OutputColumns.EVALUATION_METHOD,
     OutputColumns.SCORING_TYPE,
+    OutputColumns.SCORE,
     OutputColumns.TP,
     OutputColumns.FP,
     OutputColumns.FN,
@@ -304,12 +308,16 @@ def flatten_evaluation_results(evaluation_results, field_names=None):
                 C.FIELD_NAME: field_name,
                 C.EVALUATION_METHOD: document_score[DocumentScoringProps.SCORING_METHOD],
                 C.SCORING_TYPE: document_score[DocumentScoringProps.SCORING_TYPE],
-                C.TP: match_score[MatchScoringProps.TRUE_POSITIVE],
-                C.FP: match_score[MatchScoringProps.FALSE_POSITIVE],
-                C.FN: match_score[MatchScoringProps.FALSE_NEGATIVE],
-                C.TN: match_score[MatchScoringProps.TRUE_NEGATIVE],
-                C.EXPECTED: match_score[MatchScoringProps.EXPECTED],
-                C.ACTUAL: match_score[MatchScoringProps.ACTUAL],
+                C.SCORE: match_score.get(
+                    MatchScoringProps.SCORE,
+                    match_score.get(ContinuousMatchScoringProps.SIM_SUM)
+                ),
+                C.TP: match_score.get(MatchScoringProps.TRUE_POSITIVE),
+                C.FP: match_score.get(MatchScoringProps.FALSE_POSITIVE),
+                C.FN: match_score.get(MatchScoringProps.FALSE_NEGATIVE),
+                C.TN: match_score.get(MatchScoringProps.TRUE_NEGATIVE),
+                C.EXPECTED: match_score.get(MatchScoringProps.EXPECTED),
+                C.ACTUAL: match_score.get(MatchScoringProps.ACTUAL),
                 C.EXPECTED_CONTEXT: match_score.get(MatchScoringProps.EXPECTED_CONTEXT),
                 C.ACTUAL_CONTEXT: match_score.get(MatchScoringProps.ACTUAL_CONTEXT)
             })
@@ -341,15 +349,15 @@ def flatten_summary_results(summarised_scores, field_names=None):  # pylint: dis
                 C.EVALUATION_METHOD: scoring_method,
                 C.SCORING_TYPE: scoring_type,
                 C.FIELD_NAME: field_name,
-                C.TP: field_totals['true_positive'],
-                C.FP: field_totals['false_positive'],
-                C.FN: field_totals['false_negative'],
-                C.TN: field_totals['true_negative'],
-                C.ACCURACY: field_scores['accuracy'],
+                C.TP: field_totals.get('true_positive'),
+                C.FP: field_totals.get('false_positive'),
+                C.FN: field_totals.get('false_negative'),
+                C.TN: field_totals.get('true_negative'),
+                C.ACCURACY: field_scores.get('accuracy'),
                 C.PRECISION: field_scores['precision'],
                 C.RECALL: field_scores['recall'],
                 C.F1: field_scores['f1'],
-                C.JACCARD: field_scores['jaccard']
+                C.JACCARD: field_scores.get('jaccard')
             })
         for stats_name in ['micro', 'macro']:
             stats = summary[stats_name]
@@ -358,11 +366,11 @@ def flatten_summary_results(summarised_scores, field_names=None):  # pylint: dis
                 C.EVALUATION_METHOD: scoring_method,
                 C.SCORING_TYPE: scoring_type,
                 C.STATS_NAME: stats_name,
-                C.ACCURACY: stats['accuracy'],
+                C.ACCURACY: stats.get('accuracy'),
                 C.PRECISION: stats['precision'],
                 C.RECALL: stats['recall'],
                 C.F1: stats['f1'],
-                C.JACCARD: stats['jaccard']
+                C.JACCARD: stats.get('jaccard')
             })
     return flat_result
 
