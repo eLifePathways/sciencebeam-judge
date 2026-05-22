@@ -1,6 +1,6 @@
 import logging
 from abc import abstractmethod
-from typing import List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from sciencebeam_utils.utils.collection import extend_dict
 
@@ -17,6 +17,8 @@ from ..scoring_methods.scoring_methods import ScoringMethod, get_scoring_methods
 from ..match_scoring import (
     get_match_score_obj_for_score_fn,
     get_match_score_obj_for_score,
+    get_match_score_obj_for_continuous_score,
+    ContinuousMatchScoringProps,
     MatchScoringProps
 )
 
@@ -82,6 +84,97 @@ def _combine_partial_match_scores(scores, template_score):
         MatchScoringProps.TRUE_NEGATIVE: _sum_field(scores, MatchScoringProps.TRUE_NEGATIVE),
         MatchScoringProps.SUB_SCORES: scores
     })
+
+
+def _combine_continuous_scores(
+    scores: List[Dict[str, Any]],
+    include_sub_scores: bool = False,
+) -> Dict[str, Any]:
+    result: Dict[str, Any] = {
+        ContinuousMatchScoringProps.SIM_SUM: sum(
+            s[ContinuousMatchScoringProps.SIM_SUM] for s in scores
+        ),
+        ContinuousMatchScoringProps.EXPECTED_COUNT: sum(
+            s[ContinuousMatchScoringProps.EXPECTED_COUNT] for s in scores
+        ),
+        ContinuousMatchScoringProps.PREDICTED_COUNT: sum(
+            s[ContinuousMatchScoringProps.PREDICTED_COUNT] for s in scores
+        ),
+    }
+    if include_sub_scores:
+        result[MatchScoringProps.SUB_SCORES] = scores
+    return result
+
+
+def score_value_as_list_using_continuous_scoring_method(
+    expected_list: List[Optional[str]],
+    actual_list: List[Optional[str]],
+    scoring_method: ScoringMethod,
+    include_values: bool = False,
+    partial: bool = False,
+) -> Dict[str, Any]:
+    if partial:
+        expected_list, actual_list = pad_longest(expected_list, actual_list)
+    else:
+        if not expected_list and not actual_list:
+            return get_match_score_obj_for_continuous_score('', '', 0.0)
+        if len(expected_list) != len(actual_list):
+            return {
+                ContinuousMatchScoringProps.SIM_SUM: 0.0,
+                ContinuousMatchScoringProps.EXPECTED_COUNT: len(expected_list),
+                ContinuousMatchScoringProps.PREDICTED_COUNT: len(actual_list),
+            }
+    preprocessing_fn = scoring_method.preprocessing_fn
+    scores: List[Dict[str, Any]] = []
+    for expected_item, actual_item in zip(expected_list, actual_list):
+        expected_val = expected_item or ''
+        actual_val = actual_item or ''
+        preprocessed_expected = preprocessing_fn(expected_val) if expected_val else expected_val
+        preprocessed_actual = preprocessing_fn(actual_val) if actual_val else actual_val
+        raw_score = scoring_method.scoring_fn(preprocessed_expected, preprocessed_actual)
+        scores.append(get_match_score_obj_for_continuous_score(
+            preprocessed_expected,
+            preprocessed_actual,
+            raw_score,
+            include_values=include_values,
+        ))
+    return _combine_continuous_scores(scores, include_sub_scores=partial)
+
+
+def score_value_as_unordered_list_using_continuous_scoring_method(
+    expected_list: List,
+    actual_list: List,
+    scoring_method: ScoringMethod,
+    include_values: bool = False,
+    partial: bool = False,
+) -> Dict[str, Any]:
+    if not partial:
+        if not expected_list and not actual_list:
+            return get_match_score_obj_for_continuous_score('', '', 0.0)
+        if len(expected_list) != len(actual_list):
+            return {
+                ContinuousMatchScoringProps.SIM_SUM: 0.0,
+                ContinuousMatchScoringProps.EXPECTED_COUNT: len(expected_list),
+                ContinuousMatchScoringProps.PREDICTED_COUNT: len(actual_list),
+            }
+    distance_measure = scoring_method.distance_measure
+    match_results = get_distance_matches(
+        expected_list,
+        actual_list,
+        distance_measure=distance_measure,
+        threshold=0.0,
+    )
+    scores: List[Dict[str, Any]] = []
+    for match_result in match_results:
+        expected_val = match_result.value_1 or ''
+        actual_val = match_result.value_2 or ''
+        scores.append(get_match_score_obj_for_continuous_score(
+            expected_val,
+            actual_val,
+            match_result.score,
+            include_values=include_values,
+        ))
+    return _combine_continuous_scores(scores, include_sub_scores=partial)
 
 
 def score_value_as_list_using_match_scoring_fn(
@@ -271,6 +364,14 @@ class OrderedListScoringType(ListScoringType):
             self, expected_list, actual_list, scoring_method,
             include_values=False, convert_to_lower=False):
 
+        if scoring_method.continuous:
+            return score_value_as_list_using_continuous_scoring_method(
+                expected_list,
+                actual_list,
+                scoring_method,
+                include_values=include_values,
+                partial=self.partial,
+            )
         return score_value_as_list_using_scoring_method(
             expected_list,
             actual_list,
@@ -285,6 +386,14 @@ class UnorderedListScoringType(ListScoringType):
             self, expected_list, actual_list, scoring_method,
             include_values=False, convert_to_lower=False):
 
+        if scoring_method.continuous:
+            return score_value_as_unordered_list_using_continuous_scoring_method(
+                expected_list,
+                actual_list,
+                scoring_method,
+                include_values=include_values,
+                partial=self.partial,
+            )
         return score_value_as_unordered_list_using_scoring_method(
             expected_list,
             actual_list,
@@ -309,9 +418,19 @@ class SetScoringType(ListScoringType):
             self, expected_list, actual_list, scoring_method,
             include_values=False, convert_to_lower=False):
 
+        deduped_expected = sorted(set(_to_hashable_items(expected_list)))
+        deduped_actual = sorted(set(_to_hashable_items(actual_list)))
+        if scoring_method.continuous:
+            return score_value_as_unordered_list_using_continuous_scoring_method(
+                deduped_expected,
+                deduped_actual,
+                scoring_method,
+                include_values=include_values,
+                partial=self.partial,
+            )
         return score_value_as_unordered_list_using_scoring_method(
-            sorted(set(_to_hashable_items(expected_list))),
-            sorted(set(_to_hashable_items(actual_list))),
+            deduped_expected,
+            deduped_actual,
             scoring_method,
             include_values=include_values,
             partial=self.partial
