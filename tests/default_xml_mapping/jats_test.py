@@ -3,9 +3,15 @@ import logging
 from lxml.builder import E
 
 
+from sciencebeam_judge.evaluation_config import (
+    parse_evaluation_config,
+    get_scoring_types_by_field_map_from_config
+)
+from sciencebeam_judge.evaluation.document_scoring import iter_score_document_fields
 from sciencebeam_judge.parsing.xpath.jats_xpath_functions import (
     XLINK_HREF
 )
+from sciencebeam_judge.resources import DEFAULT_EVALUATION_CONFIG_PATH
 
 from .utils import parse_xml_node
 
@@ -24,6 +30,8 @@ TEXT_1 = 'Some text 1'
 
 EMAIL_1 = 'name1@test'
 EMAIL_2 = 'name2@test'
+
+XML_LANG = '{http://www.w3.org/XML/1998/namespace}lang'
 
 COORDS_NS = 'http://www.tei-c.org/ns/1.0'
 COORDS_NS_PREFIX = '{%s}' % COORDS_NS
@@ -568,6 +576,97 @@ class TestJats:
                 fields=['acknowledgement']
             )
             assert result.get('acknowledgement') == [TEXT_1]
+
+    class TestJatsAbstract:
+        def test_should_parse_single_abstract(self, default_xml_mapping):
+            xml = E.article(E.front(E('article-meta', E.abstract(
+                E.p(TEXT_1)
+            ))))
+            result = parse_xml_node(
+                xml,
+                xml_mapping=default_xml_mapping,
+                fields=['abstract']
+            )
+            assert result.get('abstract') == [TEXT_1]
+
+        def test_should_parse_trans_abstract_as_separate_item(
+                self, default_xml_mapping):
+            xml = E.article(E.front(E(
+                'article-meta',
+                E.abstract(E.p('Abstract 1')),
+                E('trans-abstract', {XML_LANG: 'pt'}, E.p('Resumo 1')),
+                E('trans-abstract', {XML_LANG: 'es'}, E.p('Resumen 1'))
+            )))
+            result = parse_xml_node(
+                xml,
+                xml_mapping=default_xml_mapping,
+                fields=['abstract']
+            )
+            assert result.get('abstract') == ['Abstract 1', 'Resumo 1', 'Resumen 1']
+
+        def test_should_parse_trans_abstract_without_abstract(
+                self, default_xml_mapping):
+            xml = E.article(E.front(E(
+                'article-meta',
+                E('trans-abstract', {XML_LANG: 'pt'}, E.p('Resumo 1'))
+            )))
+            result = parse_xml_node(
+                xml,
+                xml_mapping=default_xml_mapping,
+                fields=['abstract']
+            )
+            assert result.get('abstract') == ['Resumo 1']
+
+        def test_should_parse_multiple_abstracts_as_separate_items(
+                self, default_xml_mapping):
+            xml = E.article(E.front(E(
+                'article-meta',
+                E.abstract({XML_LANG: 'es'}, E.p('Resumen 1')),
+                E.abstract({XML_LANG: 'en'}, E.p('Abstract 1'))
+            )))
+            result = parse_xml_node(
+                xml,
+                xml_mapping=default_xml_mapping,
+                fields=['abstract']
+            )
+            assert result.get('abstract') == ['Resumen 1', 'Abstract 1']
+
+        def test_should_match_translated_abstracts_in_any_order_using_default_scoring_types(
+                self, default_xml_mapping):
+            expected_xml = E.article(E.front(E(
+                'article-meta',
+                E.abstract(E.p('Abstract 1')),
+                E('trans-abstract', {XML_LANG: 'pt'}, E.p('Resumo 1'))
+            )))
+            actual_xml = E.article(E.front(E(
+                'article-meta',
+                E.abstract(E.p('Resumo 1')),
+                E('trans-abstract', {XML_LANG: 'en'}, E.p('Abstract 1'))
+            )))
+            scoring_types_by_field_map = get_scoring_types_by_field_map_from_config(
+                parse_evaluation_config(DEFAULT_EVALUATION_CONFIG_PATH)
+            )
+            assert scoring_types_by_field_map['abstract'] == ['string', 'partial_ulist']
+            scores = list(iter_score_document_fields(
+                parse_xml_node(
+                    expected_xml, xml_mapping=default_xml_mapping, fields=['abstract']
+                ),
+                parse_xml_node(
+                    actual_xml, xml_mapping=default_xml_mapping, fields=['abstract']
+                ),
+                scoring_types_by_field_map=scoring_types_by_field_map,
+                field_names=['abstract'],
+                measures=['exact']
+            ))
+            match_score_by_scoring_type = {
+                score['scoring_type']: score['match_score']
+                for score in scores
+            }
+            assert set(match_score_by_scoring_type.keys()) == {'string', 'partial_ulist'}
+            assert match_score_by_scoring_type['string']['true_positive'] == 0
+            assert match_score_by_scoring_type['partial_ulist']['true_positive'] == 2
+            assert match_score_by_scoring_type['partial_ulist']['false_positive'] == 0
+            assert match_score_by_scoring_type['partial_ulist']['false_negative'] == 0
 
     class TestJatsAbstractReferenceCitation:
         def test_should_find_body_reference_citation(self, default_xml_mapping):
