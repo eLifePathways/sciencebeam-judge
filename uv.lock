@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'win32'",
@@ -196,28 +196,28 @@ resolution-markers = [
     "python_full_version == '3.13.*'",
 ]
 dependencies = [
-    { name = "beartype", marker = "python_full_version >= '3.13'" },
-    { name = "cryptography", marker = "python_full_version >= '3.13'" },
-    { name = "fastavro", marker = "python_full_version >= '3.13'" },
-    { name = "fasteners", marker = "python_full_version >= '3.13'" },
-    { name = "grpcio", version = "1.78.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
-    { name = "httplib2", marker = "python_full_version >= '3.13'" },
-    { name = "jsonpickle", marker = "python_full_version >= '3.13'" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
-    { name = "objsize", marker = "python_full_version >= '3.13'" },
-    { name = "packaging", marker = "python_full_version >= '3.13'" },
-    { name = "proto-plus", marker = "python_full_version >= '3.13'" },
-    { name = "protobuf", marker = "python_full_version >= '3.13'" },
-    { name = "pyarrow", marker = "python_full_version >= '3.13'" },
-    { name = "pyarrow-hotfix", marker = "python_full_version >= '3.13'" },
-    { name = "pymongo", marker = "python_full_version >= '3.13'" },
-    { name = "python-dateutil", marker = "python_full_version >= '3.13'" },
-    { name = "pytz", marker = "python_full_version >= '3.13'" },
-    { name = "pyyaml", marker = "python_full_version >= '3.13'" },
-    { name = "requests", marker = "python_full_version >= '3.13'" },
-    { name = "sortedcontainers", marker = "python_full_version >= '3.13'" },
-    { name = "typing-extensions", marker = "python_full_version >= '3.13'" },
-    { name = "zstandard", marker = "python_full_version >= '3.13'" },
+    { name = "beartype" },
+    { name = "cryptography" },
+    { name = "fastavro" },
+    { name = "fasteners" },
+    { name = "grpcio", version = "1.78.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "httplib2" },
+    { name = "jsonpickle" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" } },
+    { name = "objsize" },
+    { name = "packaging" },
+    { name = "proto-plus" },
+    { name = "protobuf" },
+    { name = "pyarrow" },
+    { name = "pyarrow-hotfix" },
+    { name = "pymongo" },
+    { name = "python-dateutil" },
+    { name = "pytz" },
+    { name = "pyyaml" },
+    { name = "requests" },
+    { name = "sortedcontainers" },
+    { name = "typing-extensions" },
+    { name = "zstandard" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/65/78/8a05d2ab0154e6401d575dc24dc974c83e4e7cf0fecb19262440316ae008/apache_beam-2.70.0.tar.gz", hash = "sha256:85d381df3941eedff88ccd0dafb6b4a28006d912c8a0cb9d065b7ae5f4f7bd40", size = 2966456, upload-time = "2025-12-16T12:28:35.007Z" }
 wheels = [
@@ -249,35 +249,35 @@ wheels = [
 
 [package.optional-dependencies]
 gcp = [
-    { name = "cachetools", marker = "python_full_version >= '3.13'" },
-    { name = "cloud-sql-python-connector", marker = "python_full_version >= '3.13'" },
-    { name = "google-api-core", marker = "python_full_version >= '3.13'" },
-    { name = "google-apitools", version = "0.5.35", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
-    { name = "google-auth", marker = "python_full_version >= '3.13'" },
-    { name = "google-auth-httplib2", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-aiplatform", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-bigquery", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-bigquery-storage", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-bigtable", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-core", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-datastore", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-dlp", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-kms", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-language", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-pubsub", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-pubsublite", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-recommendations-ai", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-secret-manager", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-spanner", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-storage", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-videointelligence", marker = "python_full_version >= '3.13'" },
-    { name = "google-cloud-vision", marker = "python_full_version >= '3.13'" },
-    { name = "keyrings-google-artifactregistry-auth", marker = "python_full_version >= '3.13'" },
-    { name = "orjson", marker = "python_full_version >= '3.13'" },
-    { name = "pg8000", marker = "python_full_version >= '3.13'" },
-    { name = "pymysql", marker = "python_full_version >= '3.13'" },
-    { name = "python-tds", marker = "python_full_version >= '3.13'" },
-    { name = "regex", marker = "python_full_version >= '3.13'" },
+    { name = "cachetools" },
+    { name = "cloud-sql-python-connector" },
+    { name = "google-api-core" },
+    { name = "google-apitools", version = "0.5.35", source = { registry = "https://pypi.org/simple" } },
+    { name = "google-auth" },
+    { name = "google-auth-httplib2" },
+    { name = "google-cloud-aiplatform" },
+    { name = "google-cloud-bigquery" },
+    { name = "google-cloud-bigquery-storage" },
+    { name = "google-cloud-bigtable" },
+    { name = "google-cloud-core" },
+    { name = "google-cloud-datastore" },
+    { name = "google-cloud-dlp" },
+    { name = "google-cloud-kms" },
+    { name = "google-cloud-language" },
+    { name = "google-cloud-pubsub" },
+    { name = "google-cloud-pubsublite" },
+    { name = "google-cloud-recommendations-ai" },
+    { name = "google-cloud-secret-manager" },
+    { name = "google-cloud-spanner" },
+    { name = "google-cloud-storage" },
+    { name = "google-cloud-videointelligence" },
+    { name = "google-cloud-vision" },
+    { name = "keyrings-google-artifactregistry-auth" },
+    { name = "orjson" },
+    { name = "pg8000" },
+    { name = "pymysql" },
+    { name = "python-tds" },
+    { name = "regex" },
 ]
 
 [[package]]
@@ -290,30 +290,30 @@ resolution-markers = [
     "python_full_version < '3.11'",
 ]
 dependencies = [
-    { name = "beartype", marker = "python_full_version < '3.13'" },
-    { name = "cryptography", marker = "python_full_version < '3.13'" },
-    { name = "envoy-data-plane", marker = "python_full_version < '3.13'" },
-    { name = "fastavro", marker = "python_full_version < '3.13'" },
-    { name = "fasteners", marker = "python_full_version < '3.13'" },
-    { name = "grpcio", version = "1.65.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
-    { name = "httplib2", marker = "python_full_version < '3.13'" },
-    { name = "jsonpickle", marker = "python_full_version < '3.13'" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "beartype" },
+    { name = "cryptography" },
+    { name = "envoy-data-plane" },
+    { name = "fastavro" },
+    { name = "fasteners" },
+    { name = "grpcio", version = "1.65.5", source = { registry = "https://pypi.org/simple" } },
+    { name = "httplib2" },
+    { name = "jsonpickle" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or python_full_version >= '3.13'" },
     { name = "numpy", version = "2.4.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
-    { name = "objsize", marker = "python_full_version < '3.13'" },
-    { name = "packaging", marker = "python_full_version < '3.13'" },
-    { name = "proto-plus", marker = "python_full_version < '3.13'" },
-    { name = "protobuf", marker = "python_full_version < '3.13'" },
-    { name = "pyarrow", marker = "python_full_version < '3.13'" },
-    { name = "pyarrow-hotfix", marker = "python_full_version < '3.13'" },
-    { name = "pymongo", marker = "python_full_version < '3.13'" },
-    { name = "python-dateutil", marker = "python_full_version < '3.13'" },
-    { name = "pytz", marker = "python_full_version < '3.13'" },
-    { name = "pyyaml", marker = "python_full_version < '3.13'" },
-    { name = "requests", marker = "python_full_version < '3.13'" },
-    { name = "sortedcontainers", marker = "python_full_version < '3.13'" },
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
-    { name = "zstandard", marker = "python_full_version < '3.13'" },
+    { name = "objsize" },
+    { name = "packaging" },
+    { name = "proto-plus" },
+    { name = "protobuf" },
+    { name = "pyarrow" },
+    { name = "pyarrow-hotfix" },
+    { name = "pymongo" },
+    { name = "python-dateutil" },
+    { name = "pytz" },
+    { name = "pyyaml" },
+    { name = "requests" },
+    { name = "sortedcontainers" },
+    { name = "typing-extensions" },
+    { name = "zstandard" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/3b/61/ff1f42558651cd731cc960cc38a3e7bc8406857a1d2133a861926141756b/apache_beam-2.71.0.tar.gz", hash = "sha256:515064493c478e92a87618f46c8b8c2143ce244317db683dc3d824fda37b0db5", size = 2975814, upload-time = "2026-01-22T14:40:30.714Z" }
 wheels = [
@@ -345,35 +345,35 @@ wheels = [
 
 [package.optional-dependencies]
 gcp = [
-    { name = "cachetools", marker = "python_full_version < '3.13'" },
-    { name = "cloud-sql-python-connector", marker = "python_full_version < '3.13'" },
-    { name = "google-api-core", marker = "python_full_version < '3.13'" },
-    { name = "google-apitools", version = "0.5.31", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
-    { name = "google-auth", marker = "python_full_version < '3.13'" },
-    { name = "google-auth-httplib2", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-aiplatform", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-bigquery", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-bigquery-storage", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-bigtable", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-core", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-datastore", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-dlp", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-kms", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-language", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-pubsub", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-pubsublite", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-recommendations-ai", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-secret-manager", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-spanner", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-storage", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-videointelligence", marker = "python_full_version < '3.13'" },
-    { name = "google-cloud-vision", marker = "python_full_version < '3.13'" },
-    { name = "keyrings-google-artifactregistry-auth", marker = "python_full_version < '3.13'" },
-    { name = "orjson", marker = "python_full_version < '3.13'" },
-    { name = "pg8000", marker = "python_full_version < '3.13'" },
-    { name = "pymysql", marker = "python_full_version < '3.13'" },
-    { name = "python-tds", marker = "python_full_version < '3.13'" },
-    { name = "regex", marker = "python_full_version < '3.13'" },
+    { name = "cachetools" },
+    { name = "cloud-sql-python-connector" },
+    { name = "google-api-core" },
+    { name = "google-apitools", version = "0.5.31", source = { registry = "https://pypi.org/simple" } },
+    { name = "google-auth" },
+    { name = "google-auth-httplib2" },
+    { name = "google-cloud-aiplatform" },
+    { name = "google-cloud-bigquery" },
+    { name = "google-cloud-bigquery-storage" },
+    { name = "google-cloud-bigtable" },
+    { name = "google-cloud-core" },
+    { name = "google-cloud-datastore" },
+    { name = "google-cloud-dlp" },
+    { name = "google-cloud-kms" },
+    { name = "google-cloud-language" },
+    { name = "google-cloud-pubsub" },
+    { name = "google-cloud-pubsublite" },
+    { name = "google-cloud-recommendations-ai" },
+    { name = "google-cloud-secret-manager" },
+    { name = "google-cloud-spanner" },
+    { name = "google-cloud-storage" },
+    { name = "google-cloud-videointelligence" },
+    { name = "google-cloud-vision" },
+    { name = "keyrings-google-artifactregistry-auth" },
+    { name = "orjson" },
+    { name = "pg8000" },
+    { name = "pymysql" },
+    { name = "python-tds" },
+    { name = "regex" },
 ]
 
 [[package]]
@@ -476,8 +476,8 @@ name = "betterproto"
 version = "1.2.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "grpclib", marker = "python_full_version < '3.13'" },
-    { name = "stringcase", marker = "python_full_version < '3.13'" },
+    { name = "grpclib" },
+    { name = "stringcase" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ff/2e/abfed7a721928e14aeb900182ff695be474c4ee5f07ef0874cc5ecd5b0b1/betterproto-1.2.5.tar.gz", hash = "sha256:74a3ab34646054f674d236d1229ba8182dc2eae86feb249b8590ef496ce9803d", size = 26098, upload-time = "2020-05-27T11:47:32.777Z" }
 
@@ -755,7 +755,7 @@ resolution-markers = [
     "python_full_version < '3.11'",
 ]
 dependencies = [
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" } },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/66/54/eb9bfc647b19f2009dd5c7f5ec51c4e6ca831725f1aea7a993034f483147/contourpy-1.3.2.tar.gz", hash = "sha256:b6945942715a034c671b7fc54f9588126b0b8bf23db2696e3ca8328f3ff0ab54", size = 13466130, upload-time = "2025-04-15T17:47:53.79Z" }
 wheels = [
@@ -831,7 +831,7 @@ resolution-markers = [
 ]
 dependencies = [
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
-    { name = "numpy", version = "2.4.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and python_full_version < '3.13'" },
+    { name = "numpy", version = "2.4.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/58/01/1253e6698a07380cd31a736d248a3f2a50a7c88779a1813da27503cadc2a/contourpy-1.3.3.tar.gz", hash = "sha256:083e12155b210502d0bca491432bb04d56dc3432f95a979b429f2848c3dbe880", size = 13466174, upload-time = "2025-07-26T12:03:12.549Z" }
 wheels = [
@@ -1099,7 +1099,7 @@ name = "envoy-data-plane"
 version = "0.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "betterproto", marker = "python_full_version < '3.13'" },
+    { name = "betterproto" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ce/c2/f8eae2748b19dac190a4edf59329452a6f6056b71a447fe9a4b0ef12e79e/envoy_data_plane-0.1.0.tar.gz", hash = "sha256:45d6cf5e6ef037444f343a9738a2bf46681b5f9ffab6194261fa1f97a2559d34", size = 372744, upload-time = "2020-08-14T13:19:11.226Z" }
 
@@ -1108,7 +1108,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -1433,10 +1433,10 @@ resolution-markers = [
     "python_full_version < '3.11'",
 ]
 dependencies = [
-    { name = "fasteners", marker = "python_full_version < '3.13'" },
-    { name = "httplib2", marker = "python_full_version < '3.13'" },
-    { name = "oauth2client", marker = "python_full_version < '3.13'" },
-    { name = "six", marker = "python_full_version < '3.13'" },
+    { name = "fasteners" },
+    { name = "httplib2" },
+    { name = "oauth2client" },
+    { name = "six" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/19/da/aefc4cf4c168b5d875344cd9dddc77e3a2d11986b630251af5ce47dd2843/google-apitools-0.5.31.tar.gz", hash = "sha256:4af0dd6dd4582810690251f0b57a97c1873dadfda54c5bc195844c8907624170", size = 173463, upload-time = "2020-05-14T17:25:19.126Z" }
 
@@ -1451,10 +1451,10 @@ resolution-markers = [
     "python_full_version == '3.13.*'",
 ]
 dependencies = [
-    { name = "fasteners", marker = "python_full_version >= '3.13'" },
-    { name = "httplib2", marker = "python_full_version >= '3.13'" },
-    { name = "oauth2client", marker = "python_full_version >= '3.13'" },
-    { name = "six", marker = "python_full_version >= '3.13'" },
+    { name = "fasteners" },
+    { name = "httplib2" },
+    { name = "oauth2client" },
+    { name = "six" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/f5/e4/15fbddfffa968e10c602a30b7ca4703f3e41d2dbdef011e98eee85575133/google-apitools-0.5.35.tar.gz", hash = "sha256:911bc3698686c74187414c610ae30bd6e3c0a7404178fc6479ead6c420d2dd94", size = 531707, upload-time = "2025-09-24T20:22:51.11Z" }
 wheels = [
@@ -1992,7 +1992,7 @@ resolution-markers = [
     "python_full_version == '3.13.*'",
 ]
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version >= '3.13'" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/06/8a/3d098f35c143a89520e568e6539cc098fcd294495910e359889ce8741c84/grpcio-1.78.0.tar.gz", hash = "sha256:7382b95189546f375c174f53a5fa873cef91c4b8005faa05cc5b3beea9c4f1c5", size = 12852416, upload-time = "2026-02-06T09:57:18.093Z" }
 wheels = [
@@ -2058,9 +2058,9 @@ resolution-markers = [
     "python_full_version < '3.11'",
 ]
 dependencies = [
-    { name = "googleapis-common-protos", marker = "python_full_version < '3.13'" },
-    { name = "grpcio", version = "1.65.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.13'" },
-    { name = "protobuf", marker = "python_full_version < '3.13'" },
+    { name = "googleapis-common-protos" },
+    { name = "grpcio", version = "1.65.5", source = { registry = "https://pypi.org/simple" } },
+    { name = "protobuf" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/7c/d7/013ef01c5a1c2fd0932c27c904934162f69f41ca0f28396d3ffe4d386123/grpcio-status-1.62.3.tar.gz", hash = "sha256:289bdd7b2459794a12cf95dc0cb727bd4a1742c37bd823f760236c937e53a485", size = 13063, upload-time = "2024-08-06T00:37:08.003Z" }
 wheels = [
@@ -2078,9 +2078,9 @@ resolution-markers = [
     "python_full_version == '3.13.*'",
 ]
 dependencies = [
-    { name = "googleapis-common-protos", marker = "python_full_version >= '3.13'" },
-    { name = "grpcio", version = "1.78.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.13'" },
-    { name = "protobuf", marker = "python_full_version >= '3.13'" },
+    { name = "googleapis-common-protos" },
+    { name = "grpcio", version = "1.78.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "protobuf" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/8a/cd/89ce482a931b543b92cdd9b2888805518c4620e0094409acb8c81dd4610a/grpcio_status-1.78.0.tar.gz", hash = "sha256:a34cfd28101bfea84b5aa0f936b4b423019e9213882907166af6b3bddc59e189", size = 13808, upload-time = "2026-02-06T10:01:48.034Z" }
 wheels = [
@@ -2092,8 +2092,8 @@ name = "grpclib"
 version = "0.4.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "h2", marker = "python_full_version < '3.13'" },
-    { name = "multidict", marker = "python_full_version < '3.13'" },
+    { name = "h2" },
+    { name = "multidict" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/5b/28/5a2c299ec82a876a252c5919aa895a6f1d1d35c96417c5ce4a4660dc3a80/grpclib-0.4.9.tar.gz", hash = "sha256:cc589c330fa81004c6400a52a566407574498cb5b055fa927013361e21466c46", size = 84798, upload-time = "2025-12-14T22:23:14.349Z" }
 wheels = [
@@ -2114,8 +2114,8 @@ name = "h2"
 version = "4.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "hpack", marker = "python_full_version < '3.13'" },
-    { name = "hyperframe", marker = "python_full_version < '3.13'" },
+    { name = "hpack" },
+    { name = "hyperframe" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/1d/17/afa56379f94ad0fe8defd37d6eb3f89a25404ffc71d4d848893d270325fc/h2-4.3.0.tar.gz", hash = "sha256:6c59efe4323fa18b47a632221a1888bd7fde6249819beda254aeca909f221bf1", size = 2152026, upload-time = "2025-08-23T18:12:19.778Z" }
 wheels = [
@@ -2244,17 +2244,17 @@ resolution-markers = [
     "python_full_version < '3.11'",
 ]
 dependencies = [
-    { name = "colorama", marker = "python_full_version < '3.11' and sys_platform == 'win32'" },
-    { name = "decorator", marker = "python_full_version < '3.11'" },
-    { name = "exceptiongroup", marker = "python_full_version < '3.11'" },
-    { name = "jedi", marker = "python_full_version < '3.11'" },
-    { name = "matplotlib-inline", marker = "python_full_version < '3.11'" },
-    { name = "pexpect", marker = "python_full_version < '3.11' and sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "prompt-toolkit", marker = "python_full_version < '3.11'" },
-    { name = "pygments", marker = "python_full_version < '3.11'" },
-    { name = "stack-data", marker = "python_full_version < '3.11'" },
-    { name = "traitlets", marker = "python_full_version < '3.11'" },
-    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "decorator" },
+    { name = "exceptiongroup" },
+    { name = "jedi" },
+    { name = "matplotlib-inline" },
+    { name = "pexpect", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "prompt-toolkit" },
+    { name = "pygments" },
+    { name = "stack-data" },
+    { name = "traitlets" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/40/18/f8598d287006885e7136451fdea0755af4ebcbfe342836f24deefaed1164/ipython-8.39.0.tar.gz", hash = "sha256:4110ae96012c379b8b6db898a07e186c40a2a1ef5d57a7fa83166047d9da7624", size = 5513971, upload-time = "2026-03-27T10:02:13.94Z" }
 wheels = [
@@ -2269,17 +2269,17 @@ resolution-markers = [
     "python_full_version == '3.11.*'",
 ]
 dependencies = [
-    { name = "colorama", marker = "python_full_version == '3.11.*' and sys_platform == 'win32'" },
-    { name = "decorator", marker = "python_full_version == '3.11.*'" },
-    { name = "ipython-pygments-lexers", marker = "python_full_version == '3.11.*'" },
-    { name = "jedi", marker = "python_full_version == '3.11.*'" },
-    { name = "matplotlib-inline", marker = "python_full_version == '3.11.*'" },
-    { name = "pexpect", marker = "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "prompt-toolkit", marker = "python_full_version == '3.11.*'" },
-    { name = "pygments", marker = "python_full_version == '3.11.*'" },
-    { name = "stack-data", marker = "python_full_version == '3.11.*'" },
-    { name = "traitlets", marker = "python_full_version == '3.11.*'" },
-    { name = "typing-extensions", marker = "python_full_version == '3.11.*'" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "decorator" },
+    { name = "ipython-pygments-lexers" },
+    { name = "jedi" },
+    { name = "matplotlib-inline" },
+    { name = "pexpect", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "prompt-toolkit" },
+    { name = "pygments" },
+    { name = "stack-data" },
+    { name = "traitlets" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/c5/25/daae0e764047b0a2480c7bbb25d48f4f509b5818636562eeac145d06dfee/ipython-9.10.1.tar.gz", hash = "sha256:e170e9b2a44312484415bdb750492699bf329233b03f2557a9692cce6466ada4", size = 4426663, upload-time = "2026-03-27T09:53:26.244Z" }
 wheels = [
@@ -2298,16 +2298,16 @@ resolution-markers = [
     "python_full_version == '3.12.*'",
 ]
 dependencies = [
-    { name = "colorama", marker = "python_full_version >= '3.12' and sys_platform == 'win32'" },
-    { name = "decorator", marker = "python_full_version >= '3.12'" },
-    { name = "ipython-pygments-lexers", marker = "python_full_version >= '3.12'" },
-    { name = "jedi", marker = "python_full_version >= '3.12'" },
-    { name = "matplotlib-inline", marker = "python_full_version >= '3.12'" },
-    { name = "pexpect", marker = "python_full_version >= '3.12' and sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "prompt-toolkit", marker = "python_full_version >= '3.12'" },
-    { name = "pygments", marker = "python_full_version >= '3.12'" },
-    { name = "stack-data", marker = "python_full_version >= '3.12'" },
-    { name = "traitlets", marker = "python_full_version >= '3.12'" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "decorator" },
+    { name = "ipython-pygments-lexers" },
+    { name = "jedi" },
+    { name = "matplotlib-inline" },
+    { name = "pexpect", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "prompt-toolkit" },
+    { name = "pygments" },
+    { name = "stack-data" },
+    { name = "traitlets" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/3a/73/7114f80a8f9cabdb13c27732dce24af945b2923dcab80723602f7c8bc2d8/ipython-9.12.0.tar.gz", hash = "sha256:01daa83f504b693ba523b5a407246cabde4eb4513285a3c6acaff11a66735ee4", size = 4428879, upload-time = "2026-03-27T09:42:45.312Z" }
 wheels = [
@@ -2319,7 +2319,7 @@ name = "ipython-pygments-lexers"
 version = "1.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pygments", marker = "python_full_version >= '3.11'" },
+    { name = "pygments" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ef/4c/5dd1d8af08107f88c7f741ead7a40854b8ac24ddf9ae850afbcf698aa552/ipython_pygments_lexers-1.1.1.tar.gz", hash = "sha256:09c0138009e56b6854f9535736f4171d855c8c08a563a0dcd8022f78355c7e81", size = 8393, upload-time = "2025-01-17T11:24:34.505Z" }
 wheels = [
@@ -3313,7 +3313,7 @@ wheels = [
 
 [[package]]
 name = "nbconvert"
-version = "7.17.0"
+version = "7.17.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "beautifulsoup4" },
@@ -3331,9 +3331,9 @@ dependencies = [
     { name = "pygments" },
     { name = "traitlets" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/38/47/81f886b699450d0569f7bc551df2b1673d18df7ff25cc0c21ca36ed8a5ff/nbconvert-7.17.0.tar.gz", hash = "sha256:1b2696f1b5be12309f6c7d707c24af604b87dfaf6d950794c7b07acab96dda78", size = 862855, upload-time = "2026-01-29T16:37:48.478Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/53/6a/252c7620305a9661205aed7a2a4b3592f5207bfca56ad11b7dea2c5ec2f6/nbconvert-7.17.2.tar.gz", hash = "sha256:344a218e8595117ce37396ed025d994f146d076226ebac59255a2fa085ab24d8", size = 865989, upload-time = "2026-10-12T09:11:19.583Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0d/4b/8d5f796a792f8a25f6925a96032f098789f448571eb92011df1ae59e8ea8/nbconvert-7.17.0-py3-none-any.whl", hash = "sha256:4f99a63b337b9a23504347afdab24a11faa7d86b405e5c8f9881cd313336d518", size = 261510, upload-time = "2026-01-29T16:37:46.322Z" },
+    { url = "https://files.pythonhosted.org/packages/81/fd/a8d457af68848a8e5c12dd1d84ff35c415db471af78280e0703db4efbb12/nbconvert-7.17.2-py3-none-any.whl", hash = "sha256:6a143c11c00bf831604da4b1be4347d36ea52367057eb920135d69bc2862fed2", size = 262094, upload-time = "2026-10-12T09:11:17.215Z" },
 ]
 
 [[package]]
@@ -3776,7 +3776,7 @@ name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ptyprocess", marker = "(python_full_version < '3.14' and sys_platform == 'emscripten') or (python_full_version < '3.14' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32')" },
+    { name = "ptyprocess" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z" }
 wheels = [
@@ -5105,8 +5105,8 @@ name = "secretstorage"
 version = "3.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cryptography", marker = "(python_full_version < '3.14' and sys_platform == 'emscripten') or (python_full_version < '3.14' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32')" },
-    { name = "jeepney", marker = "(python_full_version < '3.14' and sys_platform == 'emscripten') or (python_full_version < '3.14' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32')" },
+    { name = "cryptography" },
+    { name = "jeepney" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/1c/03/e834bcd866f2f8a49a85eaff47340affa3bfa391ee9912a952a1faa68c7b/secretstorage-3.5.0.tar.gz", hash = "sha256:f04b8e4689cbce351744d5537bf6b1329c6fc68f91fa666f60a380edddcd11be", size = 19884, upload-time = "2025-11-23T19:02:53.191Z" }
 wheels = [
