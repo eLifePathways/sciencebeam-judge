@@ -311,6 +311,15 @@ class TestTei:
             result = parse_xml_node(xml, xml_mapping=default_xml_mapping)
             assert result.get('abstract') == ['Sub: abstract1']
 
+        def test_should_return_multiple_abstracts_as_separate_items(
+                self, default_xml_mapping):
+            xml = TEI_E.TEI(TEI_E.teiHeader(TEI_E.profileDesc(
+                TEI_E.abstract(TEI_E.div(TEI_E.p('abstract1'))),
+                TEI_E.abstract(TEI_E.div(TEI_E.p('resumo1')))
+            )))
+            result = parse_xml_node(xml, xml_mapping=default_xml_mapping)
+            assert result.get('abstract') == ['abstract1', 'resumo1']
+
     class TestTeiBodyAndBackSections:
         def test_should_parse_body_and_back_sections(
                 self, default_xml_mapping):

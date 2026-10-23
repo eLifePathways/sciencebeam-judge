@@ -137,7 +137,9 @@ Using the threshold gives us a good indication of whether the mostly matching te
 
 ### Abstract
 
-Like it is the case for the _title_, every manuscript has only one _abstract_ and therefore the score will be calculated the same way.
+Like it is the case for the _title_, most manuscripts have only one _abstract_ and therefore the score will be calculated the same way.
+
+Some manuscripts have more than one abstract, e.g. an abstract in a second language (JATS `trans-abstract`) or multiple `abstract` elements. Each of those is extracted as a separate item of the `abstract` field (`abstract` and `trans-abstract` in document order). With the `string` scoring type the items are concatenated, which only matches if the prediction contains the same abstracts in the same order. The default configuration therefore also scores `abstract` as `partial_ulist`, which matches every abstract individually, regardless of the order (the language order of the PDF often differs from the XML).
 
 However, we want to apply some extra normalisation before comparing the abstract:
 
