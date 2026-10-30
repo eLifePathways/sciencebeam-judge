@@ -34,7 +34,7 @@ notebook = [
 
 dev = [
     "apache-beam[gcp]>=2.50.0",
-    "anyio<4",
+    "anyio<5",
     "setuptools<79",
     "flake8>=4.0.1,<5",
     "jsonschema>=4.3.0",
