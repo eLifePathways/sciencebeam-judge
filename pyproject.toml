@@ -38,7 +38,7 @@ dev = [
     "setuptools<79",
     "flake8>=4.0.1,<5",
     "jsonschema>=4.3.0",
-    "mypy>=0.910,<0.920",
+    "mypy>=0.910,<1.21",
     "pylint>=2.8.3,<2.9",
     "pytest>=6.2.5,<7",
     "pytest-watch>=4.2.0",
